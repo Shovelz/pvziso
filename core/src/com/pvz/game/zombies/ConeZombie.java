@@ -1,5 +1,6 @@
 package com.pvz.game.zombies;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -37,19 +38,34 @@ public class ConeZombie extends Zombie {
     private int previousFrameIndex = -1;
     private Zombie transitionZombie;
     private boolean diedToExplosion = false;
+    private AssetManager assetManager;
 
 
-    public ConeZombie() {
-        walkSheet = new Texture("coneZombieWalkSheet.png");
-        eatSheet = new Texture("coneZombieEatSheet.png");
-        deathSheet = new Texture("zombieDeadSheet.png");
+    public ConeZombie(AssetManager assetManager) {
+        this.assetManager = assetManager;
+        loadAssets();
+        walkSheet = assetManager.get("coneZombieWalkSheet.png", Texture.class);
+        eatSheet = assetManager.get("coneZombieEatSheet.png", Texture.class);
+        deathSheet = assetManager.get("zombieDeadSheet.png", Texture.class);
+        explosionDeathSheet = assetManager.get("zombieDeadExplosionSheet.png", Texture.class);
+
         worldPos = new Vector2(x, y);
-        explosionDeathSheet = new Texture("zombieDeadExplosionSheet.png");
         walkAnimation = loadAnimations(width, height, walkSheet);
         eatAnimation = loadAnimations(width, height, eatSheet);
         deathAnimation = loadAnimations(width + 1, 33, deathSheet);
         hitbox = new Rectangle(worldPos.x, worldPos.y, 13, 22);
         currentAnimation = walkAnimation;
+    }
+
+
+    private void loadAssets(){
+
+        assetManager.load("zombieWalkSheet.png", Texture.class);
+        assetManager.load("zombieEatSheet.png", Texture.class);
+        assetManager.load("zombieDeadSheet.png", Texture.class);
+        assetManager.load("zombieDeadExplosionSheet.png", Texture.class);
+
+        assetManager.finishLoading();
     }
 
 
@@ -107,7 +123,7 @@ public class ConeZombie extends Zombie {
             return;
         }
         if (health <= maxHealth / 2f) {  // Replace only when below 50% HP
-            Zombie z = new NormalZombie();
+            Zombie z = new NormalZombie(assetManager);
             z.setLane(lane);
             z.setWorldPosition(worldPos);
             z.setHealth(health);

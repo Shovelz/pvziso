@@ -1,5 +1,6 @@
 package com.pvz.game.ui;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -23,12 +24,12 @@ public class PauseButton implements Clickable {
     }
 
     @Override
-    public boolean isHovered(Vector2 mousePosition, GameScreen gameScreen) {
+    public boolean isHovered(Vector2 mousePosition, Screen gameScreen) {
         return hitbox.contains(mousePosition);
     }
 
     @Override
-    public void onClick(GameScreen gameScreen) {
+    public void onClick(Screen gameScreen) {
         gameScreen.pause();
         SoundManager.getInstance().play("pause");
     }

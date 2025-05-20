@@ -78,4 +78,8 @@ public class MusicManager {
         }
         sounds.clear();
     }
+
+    public Music getCurrentlyPlaying() {
+        return currentlyPlaying;
+    }
 }

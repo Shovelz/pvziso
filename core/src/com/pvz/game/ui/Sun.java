@@ -122,16 +122,16 @@ public class Sun implements Clickable {
 	}
 
 	@Override
-	public boolean isHovered(Vector2 mousePosition, GameScreen gameScreen) {
+	public boolean isHovered(Vector2 mousePosition, Screen gameScreen) {
 		return hitbox.contains(mousePosition);
 	}
 
 	@Override
-	public void onClick(GameScreen gameScreen) {
+	public void onClick(Screen gameScreen) {
 		if (!clicked) {
 			SoundManager.getInstance().play("points");
 			setClicked();
-			gameScreen.addSun(25);
+			((GameScreen) gameScreen).addSun(25);
 		}
 	}
 }

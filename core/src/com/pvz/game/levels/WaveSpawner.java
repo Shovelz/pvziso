@@ -1,5 +1,6 @@
 package com.pvz.game.levels;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.pvz.game.zombies.BucketZombie;
 import com.pvz.game.zombies.ConeZombie;
 import com.pvz.game.zombies.NormalZombie;
@@ -40,14 +41,14 @@ public class WaveSpawner {
     }
 
 
-    public WaveSpawner(Foe[] foes, float difficultyRate, int maxWaveSize) {
+    public WaveSpawner(Foe[] foes, float difficultyRate, int maxWaveSize, AssetManager assetManager) {
         this.foes = foes;
         if (foes == null) {
             //Default spawn rate for endless
             this.foes = new Foe[]{
-                    new Foe(new NormalZombie(), 30, 1, 1),
-                    new Foe(new ConeZombie(), 15, 3, 3),
-                    new Foe(new BucketZombie(), 2, 4, 7)
+                    new Foe(new NormalZombie(assetManager), 30, 1, 1),
+                    new Foe(new ConeZombie(assetManager), 15, 3, 3),
+                    new Foe(new BucketZombie(assetManager), 2, 4, 7)
             };
         }
 
@@ -70,17 +71,6 @@ public class WaveSpawner {
         return spawnableFoes;
     }
 
-    public void generateSpawnableFoes(){
-        spawnableFoes.clear();
-
-        List<Foe> allFoes = Arrays.asList(foes);
-        for (Foe f : allFoes) {
-            if (f.cost <= globalPoints && f.minPoints <= globalPoints) {
-                spawnableFoes.add(f);
-            }
-        }
-
-    }
 
     /**
      * Simulates a number of waves, printing the foes spawned each wave.
@@ -111,8 +101,14 @@ public class WaveSpawner {
      * Creates a wave of foes based on available points.
      */
     public ArrayList<Foe> spawnWave() {
+        spawnableFoes.clear();
 
-        generateSpawnableFoes();
+        List<Foe> allFoes = Arrays.asList(foes);
+        for (Foe f : allFoes) {
+            if (f.cost <= globalPoints && f.minPoints <= globalPoints) {
+                spawnableFoes.add(f);
+            }
+        }
 
         List<Foe> wave = new ArrayList<>();
         int[] weights = new int[spawnableFoes.size()];

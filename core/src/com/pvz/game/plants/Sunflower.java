@@ -15,6 +15,11 @@ public class Sunflower extends Plant {
 
 
     @Override
+    public String getPacketTexture(){
+        return "1.png";
+    }
+
+    @Override
     public Sunflower clone() throws CloneNotSupportedException {
         Sunflower clonedSunflower = (Sunflower) super.clone();
         return clonedSunflower;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -18,7 +19,6 @@ import com.pvz.game.plants.*;
 import com.pvz.game.screens.GameScreen;
 import com.pvz.game.tiles.*;
 import com.pvz.game.ui.SunManager;
-import com.pvz.game.ui.WinningItem;
 import com.pvz.game.zombies.ZombieManager;
 import com.pvz.game.mower.Mower;
 import com.pvz.game.mower.MowerManager;
@@ -42,6 +42,7 @@ public class Tilemap {
 
     private SunManager sunManager;
     private Camera camera;
+    private AssetManager assetManager;
 
     public static final String[][] map = {{"0", "0", "0", "0", "0", "0", "0", "0", "0"},
             {"0", "0", "0", "0", "0", "0", "0", "0", "0"}, {"0", "0", "0", "0", "0", "0", "0", "0", "0"},
@@ -64,30 +65,51 @@ public class Tilemap {
 
     private GameScreen screen;
 
-    public Tilemap(TiledMap iso, SunManager sm, Camera c, GameScreen s) {
-        isoMap = iso;
-        grass = new Texture("grass.png");
-        grass.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-        houseBG = new Texture("background6x9.png");
-        uiBG = new Texture("ui.png");
-        uiSeeds = new Texture("seed_packet.png");
+    public Tilemap(TiledMap iso, SunManager sm, Camera c, GameScreen s, AssetManager assetManager) {
+        this.isoMap = iso;
+        this.assetManager = assetManager;
+        this.camera = c;
+        this.screen = s;
+        this.sunManager = sm;
 
-        baseCorner.x = isoMap.getLayers().get(0).getOffsetX();
-        baseCorner.y = isoMap.getLayers().get(0).getOffsetY();
+        regenerateCornerPos();
 
         seedPackets = new ArrayList<UiSeedTile>();
         packetHitboxes = new ArrayList<Rectangle>();
 
-        camera = c;
-        screen = s;
 
-        sunManager = sm;
         loadPlants();
+        loadAssets();
         fillMap();
 
-
+        grass = assetManager.get("grass.png", Texture.class);
+        grass.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+        houseBG = assetManager.get("background6x9.png", Texture.class);
+        uiBG = assetManager.get("ui.png", Texture.class);
+        uiSeeds = assetManager.get("seed_packet.png", Texture.class);
 
     }
+
+    public void regenerateCornerPos(){
+
+        baseCorner.x = isoMap.getLayers().get(0).getOffsetX();
+        baseCorner.y = isoMap.getLayers().get(0).getOffsetY();
+    }
+
+    private void loadAssets() {
+        assetManager.load("grass.png", Texture.class);
+        assetManager.load("background6x9.png", Texture.class);
+        assetManager.load("ui.png", Texture.class);
+        assetManager.load("seed_packet.png", Texture.class);
+
+        // Add packets for plants
+        for (Plant p : getPlantStatic()) {
+            assetManager.load("packets/" + p.getPacketTexture(), Texture.class);
+        }
+
+        assetManager.finishLoading();
+    }
+
 
     public GameScreen getScreen() {
         return screen;
@@ -100,7 +122,7 @@ public class Tilemap {
             float y = base.get(new Vector2(row, map[0].length - 1)).getWorldPos().y;
             float endX = base.get(new Vector2(row, 0)).getWorldPos().x + TILE_WIDTH;
             float endY = base.get(new Vector2(row, 0)).getWorldPos().y;
-            mowers.addMower(row, new Mower(x, y, endX, endY, row));
+            mowers.addMower(row, new Mower(x, y, endX, endY, row, assetManager));
         }
     }
 
@@ -130,7 +152,7 @@ public class Tilemap {
         plantsStatic.add(new Peashooter());
         plantsStatic.add(new Sunflower());
 //        plantsStatic.add(new Walnut());
-//        plantsStatic.add(new CherryBomb());
+        plantsStatic.add(new CherryBomb());
     }
 
     public void update(float delta) {
@@ -161,6 +183,7 @@ public class Tilemap {
         zombies.render(batch, delta);
 
     }
+
     public void updateUI(float delta) {
 
         for (UiSeedTile tile : seedPackets) {
@@ -188,7 +211,9 @@ public class Tilemap {
 
         for (int i = 0; i < plantsStatic.size(); i++) {
             Vector2 offset = new Vector2(-29 + i * 18, 203 - i * 9);
-            UiSeedTile tile = new UiSeedTile(new Texture("packets/" + i + ".png"), new Vector2(0, 0),
+            String texturePath = "packets/" + plantsStatic.get(i).getPacketTexture();
+            Texture packetTex = assetManager.get(texturePath, Texture.class);
+            UiSeedTile tile = new UiSeedTile(packetTex, new Vector2(0, 0),
                     new Vector2(baseCorner.x + offset.x, baseCorner.y + offset.y));
             tile.setHitbox(new Rectangle(baseCorner.x + offset.x, baseCorner.y + offset.y, 14, 24));
             tile.setPlant(plantsStatic.get(i));
@@ -206,7 +231,10 @@ public class Tilemap {
 
         TileMapSingleton.getInstance().setMap(base);
 
-        zombies = new ZombieManager(this);
+        if(zombies == null) {
+            zombies = new ZombieManager(this);
+        }
+
         for (int row = 0; row < map.length; row++) {
             for (int col = 0; col < map[row].length; col++) {
                 float x = corner.x + ((row - col) * TILE_WIDTH) - TILE_WIDTH;
@@ -215,8 +243,9 @@ public class Tilemap {
                         new PlantTile(null, new Vector2(row, col), new Vector2(x, y), base, sunManager, zombies));
             }
         }
-        mowers = new MowerManager(zombies);
-
+        if(mowers == null) {
+            mowers = new MowerManager(zombies);
+        }
         loadMowers();
         loadTargetTiles();
     }
@@ -291,5 +320,17 @@ public class Tilemap {
 
     public ArrayList<Plant> getPlantStatic() {
         return plantsStatic;
+    }
+
+    public void reset() {
+        System.out.println("tilemap reset");
+        seedPackets.clear();
+        plantsStatic.clear();
+        regenerateCornerPos();
+
+        loadPlants();
+        fillMap();
+        loadMowers();
+        zombies.reset();
     }
 }

@@ -1,5 +1,7 @@
 package com.pvz.game.ui;
 
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -20,8 +22,10 @@ public class Shovel implements Clickable {
     private Rectangle hitbox;
     private Tilemap map;
 
-    public Shovel(Tilemap m, Vector2 p) {
-        shovelSprite = new Texture("shovel.png");
+    public Shovel(Tilemap m, Vector2 p, AssetManager assetManager) {
+        assetManager.load("shovel.png", Texture.class);
+        assetManager.finishLoading();
+        shovelSprite = assetManager.get("shovel.png", Texture.class);
         map = m;
         pos = uiShovelPosition;
         hitbox = new Rectangle(pos.x, pos.y, 20,20);
@@ -54,12 +58,12 @@ public class Shovel implements Clickable {
     }
 
     @Override
-    public boolean isHovered(Vector2 mousePosition, GameScreen gameScreen) {
+    public boolean isHovered(Vector2 mousePosition, Screen gameScreen) {
         return hitbox.contains(mousePosition) && !clicked;
     }
 
     @Override
-    public void onClick(GameScreen gameScreen) {
+    public void onClick(Screen gameScreen) {
         SoundManager.getInstance().play("shovel");
         setClicked(true);
     }

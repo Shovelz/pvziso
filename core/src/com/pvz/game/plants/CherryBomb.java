@@ -14,6 +14,10 @@ public class CherryBomb extends Plant{
 		super(new Texture("cherry.png"), new Texture("cherrySheet.png"), 0, 300, 1.5f, 0f, 150, 0, 2.5f, false);
 	}
 
+	@Override
+	public String getPacketTexture(){
+		return "3.png";
+	}
 
 	@Override
 	public CherryBomb clone() throws CloneNotSupportedException {

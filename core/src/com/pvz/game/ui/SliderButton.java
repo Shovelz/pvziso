@@ -1,5 +1,6 @@
 package com.pvz.game.ui;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -48,13 +49,13 @@ public class SliderButton implements Clickable {
     }
 
     @Override
-    public boolean isHovered(Vector2 mousePosition, GameScreen gameScreen) {
+    public boolean isHovered(Vector2 mousePosition, Screen gameScreen) {
         return hitbox.contains(mousePosition);
     }
 
     @Override
-    public void onClick(GameScreen gameScreen){
-        selected = !gameScreen.getMouseReleased();
+    public void onClick(Screen gameScreen){
+        selected = !((GameScreen) gameScreen).getMouseReleased();
         if(!selected){
             value = (pos.x - boundsPosLeft.x) / (boundsPosRight.x - boundsPosLeft.x);
             action.apply(value);

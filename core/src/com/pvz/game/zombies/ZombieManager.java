@@ -24,13 +24,16 @@ public class ZombieManager {
 
     public ZombieManager(Tilemap mp) {
         this.map = mp;
-        this.level = new Level1(this);
-//		levelTest.test();
         for (int i = 0; i < map.map[0].length; i++) {
             laneZombies.put(i, new ArrayList<Zombie>());
             laneZombiesPerWave.put(i, new ArrayList<Zombie>());
         }
 
+    }
+
+    public void setLevel(Level l) {
+        this.level = l;
+//        reset();
     }
 
 
@@ -51,20 +54,32 @@ public class ZombieManager {
         newZombie.addZombieManager(this);
     }
 
+    public ArrayList<Zombie> getZombies() {
+        return zombies;
+    }
 
     /**
      * Adds zombies from the current wave without removing existing ones.
      */
 
     public void initializeZombiesFromLevel(List<WaveSpawner.Foe> newFoes) {
-        if (newFoes.isEmpty()) return;
+        if (newFoes.isEmpty()) {
+            return;
+        }
+
+        System.out.println("Initializing " + newFoes.size() + " zombies");
 
 
-        for (List<Zombie> zombies : laneZombiesPerWave.values()) {
-            zombies.clear();
+        for (List<Zombie> zombiesList : laneZombiesPerWave.values()) {
+            zombiesList.clear();
         }
 
         for (WaveSpawner.Foe foe : newFoes) {
+            if (foe == null || foe.getZombie() == null) {
+                System.out.println("Null foe or zombie detected");
+                continue;
+            }
+
             Zombie zombie = foe.getZombie().clone(); // Clone to create a unique instance
             zombie.addZombieManager(this);
             zombie.setMap(map);
@@ -87,7 +102,7 @@ public class ZombieManager {
             if (Math.random() < 0.2) {
                 // 20% chance to choose randomly
                 lane = new Random().nextInt(6);
-            }else{
+            } else {
                 lane = candidateLanes.get(new Random().nextInt(candidateLanes.size()));
             }
 
@@ -96,8 +111,8 @@ public class ZombieManager {
 //                    .findFirst()
 //                    .getAsInt();
 
-            int min = -(int)(Tilemap.TILE_WIDTH / 4);
-            int max =  (int)(Tilemap.TILE_WIDTH / 4);
+            int min = -(int) (Tilemap.TILE_WIDTH / 4);
+            int max = (int) (Tilemap.TILE_WIDTH / 4);
             float offset = new Random().nextInt(max - min) + min;
 
             zombie.setStartPosition(lane, map, offset);
@@ -105,14 +120,15 @@ public class ZombieManager {
             laneZombiesPerWave.get(lane).add(zombie);
             laneZombies.get(lane).add(zombie);
             prevZombiePos = zombie.getPosition();
+            System.out.println("Added zombie to lane " + lane + " at " + zombie.getPosition());
         }
 
 
         for (Map.Entry<Integer, List<Zombie>> entry : laneZombiesPerWave.entrySet()) {
             List<Zombie> zombies = entry.getValue();
             Random rand = new Random();
-            int min = (int)(Tilemap.TILE_WIDTH / 4);
-            int max = (int)(Tilemap.TILE_WIDTH + Tilemap.TILE_WIDTH / 3f);
+            int min = (int) (Tilemap.TILE_WIDTH / 4);
+            int max = (int) (Tilemap.TILE_WIDTH + Tilemap.TILE_WIDTH / 3f);
             float offset = rand.nextInt(max - min) + min;
             if (zombies.size() > 1) {
                 for (int i = 1; i < zombies.size(); i++) { // Start from index 1
@@ -156,7 +172,14 @@ public class ZombieManager {
 
     public void update(float delta) {
 
+
+        System.out.println("Before level update - Zombie count: " + zombies.size());
+// Store current zombies to check for changes
+        int zombieCountBefore = zombies.size();
+// Update level (this might trigger new wave spawning)
         level.update(delta);
+// Debug print after level update
+        System.out.println("After level update - Zombie count: " + zombies.size());
         for (Zombie zombie : new ArrayList<>(zombies)) {
             zombie.setMap(map);
             zombie.update(delta, map);
@@ -165,9 +188,7 @@ public class ZombieManager {
         for (Zombie zombie : new ArrayList<>(deadZombies)) {
             zombie.update(delta, map);
         }
-//        if(level.hasWon()){
-//            map.spawnWinningItem();
-//        }
+//        System.out.println(zombies);
     }
 
 
@@ -193,9 +214,29 @@ public class ZombieManager {
         level.render(batch, delta);
     }
 
-    public Level getLevel(){
+    public Level getLevel() {
         return level;
     }
 
 
+    public void reset() {
+        System.out.println("reset");
+        zombies.clear();
+        deadZombies.clear();
+
+//        laneZombies.clear();
+//        laneZombiesPerWave.clear();
+        prevZombiePos = null;
+
+        for (int i = 0; i < map.map[0].length; i++) {
+            laneZombies.put(i, new ArrayList<Zombie>());
+            laneZombiesPerWave.put(i, new ArrayList<Zombie>());
+        }
+
+    }
+
+    public void startSpawning() {
+        level.startSpawningWaves();
+        System.out.println("Started spawning zombies for level");
+    }
 }

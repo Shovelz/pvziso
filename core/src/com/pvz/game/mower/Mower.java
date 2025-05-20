@@ -1,5 +1,6 @@
 package com.pvz.game.mower;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -19,9 +20,14 @@ public class Mower {
 	private Rectangle hitbox;
 
 	private boolean triggered;
+	private AssetManager assetManager;
 
-	public Mower(float sX, float sY, float eX, float eY, int l) {
-		sprite = new Texture("mower.png");
+	public Mower(float sX, float sY, float eX, float eY, int l, AssetManager assetManager) {
+		this.assetManager = assetManager;
+		assetManager.load("mower.png", Texture.class);
+		assetManager.finishLoading();
+
+		sprite = assetManager.get("mower.png", Texture.class);
 		startX = sX;
 		startY = sY;
 		x = startX + Tilemap.TILE_WIDTH / 4f;

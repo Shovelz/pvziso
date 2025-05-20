@@ -10,6 +10,10 @@ public class Walnut extends Plant {
         super(new Texture("walnut.png"), new Texture("walnutSheet.png"), 0, 4000, 0, 0, 50, 0, 30f, true);
     }
 
+    @Override
+    public String getPacketTexture(){
+        return "2.png";
+    }
 
     @Override
     public Walnut clone() throws CloneNotSupportedException {

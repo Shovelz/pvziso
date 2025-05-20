@@ -1,5 +1,6 @@
 package com.pvz.game.zombies;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -37,19 +38,32 @@ public class BucketZombie extends Zombie {
     private int previousFrameIndex = -1;
     private Zombie transitionZombie;
     private boolean diedToExplosion = false;
+    private AssetManager assetManager;
 
 
-    public BucketZombie() {
-        walkSheet = new Texture("bucketZombieWalkSheet.png");
-        eatSheet = new Texture("bucketZombieEatSheet.png");
-        deathSheet = new Texture("zombieDeadSheet.png");
+    public BucketZombie(AssetManager assetManager) {
+        this.assetManager = assetManager;
+        loadAssets();
+        walkSheet = assetManager.get("bucketZombieWalkSheet.png", Texture.class);
+        eatSheet = assetManager.get("bucketZombieEatSheet.png", Texture.class);
+        deathSheet = assetManager.get("zombieDeadSheet.png", Texture.class);
+        explosionDeathSheet = assetManager.get("zombieDeadExplosionSheet.png", Texture.class);
         worldPos = new Vector2(x, y);
-        explosionDeathSheet = new Texture("zombieDeadExplosionSheet.png");
         walkAnimation = loadAnimations(width, height, walkSheet);
         eatAnimation = loadAnimations(width, height, eatSheet);
         deathAnimation = loadAnimations(width + 1, 33, deathSheet);
         hitbox = new Rectangle(worldPos.x, worldPos.y, 13, 22);
         currentAnimation = walkAnimation;
+    }
+
+    private void loadAssets(){
+
+        assetManager.load("bucketZombieWalkSheet.png", Texture.class);
+        assetManager.load("bucketZombieEatSheet.png", Texture.class);
+        assetManager.load("zombieDeadSheet.png", Texture.class);
+        assetManager.load("zombieDeadExplosionSheet.png", Texture.class);
+
+        assetManager.finishLoading();
     }
 
 
@@ -108,7 +122,7 @@ public class BucketZombie extends Zombie {
             return;
         }
         if (damage >= maxHealth || (health <= maxHealth * (2f / 3f) && damage > 0f)) {
-            Zombie z = new NormalZombie();
+            Zombie z = new NormalZombie(assetManager);
             z.setLane(lane);
             z.setWorldPosition(worldPos);
             z.setHealth(health);

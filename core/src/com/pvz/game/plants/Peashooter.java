@@ -14,6 +14,11 @@ public class Peashooter extends Plant{
 		super(new Texture("peashooter.png"), new Texture("peashooterSheet.png"), 20, 300, 1.5f, 0f,100, 2, 7.5f, true);
 	}
 
+	@Override
+	public String getPacketTexture(){
+		return "0.png";
+	}
+
 	public void setProjectile() {
 		projectile = (new Pea(new Vector2(tile.getWorldPos().x, tile.getWorldPos().y), 20, tile));
 	}

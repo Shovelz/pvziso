@@ -28,7 +28,6 @@ public class Explosion extends Projectile {
 
 		for(int i = -1; i < 2; i++){
 			for(int j = -1; j < 2; j++) {
-				System.out.println("Tile x: " + ((int) plant.getTilemapPos().x + i) + " Tile y: " + ((int) plant.getTilemapPos().y + j));
 				AbstractTile t = TileMapSingleton.getInstance().getMap().get(new Vector2(((int) plant.getTilemapPos().x + i), ((int) plant.getTilemapPos().y + j)));
 				if(t != null){
 					tiles.add(t);
@@ -40,7 +39,6 @@ public class Explosion extends Projectile {
 
 		ArrayList<Zombie> zombiesCopy = new ArrayList<>(zombieManager.getzombies());
 		for(Zombie zombie: zombiesCopy) {
-			System.out.println(zombie.getTile());
 			if (tiles.contains(zombie.getTile())) {
 				zombie.takeDamage(damage, true);
 			}

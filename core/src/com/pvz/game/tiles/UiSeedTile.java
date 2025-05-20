@@ -2,6 +2,7 @@ package com.pvz.game.tiles;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -128,14 +129,14 @@ public class UiSeedTile extends AbstractTile implements Clickable {
     }
 
     @Override
-    public boolean isHovered(Vector2 mousePosition, GameScreen gameScreen) {
+    public boolean isHovered(Vector2 mousePosition, Screen gameScreen) {
         return hitbox.contains(mousePosition);
     }
 
     @Override
-    public void onClick(GameScreen gameScreen) {
+    public void onClick(Screen gameScreen) {
         if (rechargeProgress == 100f) {
-            gameScreen.setCurrentPacket(this);
+            ((GameScreen) gameScreen).setCurrentPacket(this);
             selected = true;
             SoundManager.getInstance().play("seed_lift");
         }

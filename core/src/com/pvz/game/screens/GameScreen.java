@@ -8,12 +8,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -29,13 +29,18 @@ import com.pvz.game.TileMapSingleton;
 import com.pvz.game.Tilemap;
 import com.pvz.game.audio.MusicManager;
 import com.pvz.game.audio.SoundManager;
+import com.pvz.game.levels.Level;
+import com.pvz.game.levels.Level1;
+import com.pvz.game.levels.Level2;
 import com.pvz.game.tiles.*;
 import com.pvz.game.ui.*;
 import com.pvz.game.plants.*;
+import com.pvz.game.zombies.ZombieManager;
 
 public class GameScreen implements Screen {
 
     private SpriteBatch batch;
+    private AssetManager assetManager;
     private OrthographicCamera camera;
     private Tilemap mapObjects;
     private int scrollSpeed = 100;
@@ -68,7 +73,6 @@ public class GameScreen implements Screen {
 
     private enum MouseState {NONE, HOVER, CLICKED, DRAGGING}
 
-    ;
     private MouseState mouseState;
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -88,10 +92,14 @@ public class GameScreen implements Screen {
     private GameOverScreen gameOverScreen = new GameOverScreen();
     private boolean mouseReleased = false;
 
+    private HashMap<Integer, Level> levels = new HashMap<>();
+    private boolean gameStarted = false;
 
-    public GameScreen(SpriteBatch batch) {
 
+    public GameScreen(SpriteBatch batch, AssetManager assetManager) {
+        this.assetManager = assetManager;
         this.batch = batch;
+
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         port = new FitViewport(1920 / 4, 1080 / 4, camera);
         camera.position.set(170, 30, 0);
@@ -100,10 +108,10 @@ public class GameScreen implements Screen {
         renderer = new IsometricTiledMapRenderer(map);
         sunManager = new SunManager();
 
-        mapObjects = new Tilemap(map, sunManager, camera, this);
+        mapObjects = new Tilemap(map, sunManager, camera, this, assetManager);
 
         packets = mapObjects.getPackets();
-        ui = new Ui(mapObjects.getCorner(), this);
+        ui = new Ui(mapObjects.getCorner(), this, assetManager);
 
         mouseState = MouseState.NONE;
 
@@ -134,10 +142,22 @@ public class GameScreen implements Screen {
             }
         });
 
-        SoundManager.getInstance().play("readysetplant");
-        MusicManager.getInstance().play("track2");
 
+    }
 
+    public void setLevel(int level) {
+        Level newLevel = getLevel(level);
+        if (newLevel != null) {
+            mapObjects.getZombies().setLevel(newLevel);
+            System.out.println("Set level to " + level);
+        }
+    }
+
+    public void startGame() {
+        gameStarted = true;
+        // Add debug message to verify game is starting
+        System.out.println("Starting game with zombies...");
+        mapObjects.getZombies().startSpawning();
     }
 
     public Camera getCamera() {
@@ -147,6 +167,8 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
 
+//        SoundManager.getInstance().play("readysetplant");
+//        MusicManager.getInstance().play("track2");
     }
 
     public boolean getMouseReleased() {
@@ -155,14 +177,6 @@ public class GameScreen implements Screen {
 
     public Integer getSunAmount() {
         return sunAmount;
-    }
-
-    public void createSunPointsCounter() {
-        Label.LabelStyle style = new Label.LabelStyle();
-        style.font = new BitmapFont(Gdx.files.internal("default.fnt"));
-
-        sunPointsLabel = new Label("Sun Points: 50", style); // Start with 50 sun points
-        sunPointsLabel.setPosition(10, Gdx.graphics.getHeight() - 60);
     }
 
     public void handleInput(float delta) {
@@ -176,8 +190,8 @@ public class GameScreen implements Screen {
             camera.position.y -= delta * scrollSpeed;
 
         if (Gdx.input.isKeyPressed(Keys.K))
-            gameOver();
-//            camera.zoom = Math.min(camera.zoom + zoomSpeed * delta, 8.0f);
+//            gameOver();
+            camera.zoom = Math.min(camera.zoom + zoomSpeed * delta, 8.0f);
         if (Gdx.input.isKeyPressed(Keys.L))
             camera.zoom = Math.max(camera.zoom - zoomSpeed * delta, 0.5f);
 
@@ -189,9 +203,6 @@ public class GameScreen implements Screen {
 
     }
 
-//	public void setCurrentPlant(Plant p){
-//		currentPlant = p;
-//	}
 
     public void update(float delta) {
 
@@ -222,6 +233,40 @@ public class GameScreen implements Screen {
             mapObjects.updateUI(delta);
 
             produceSkySun(delta);
+        }
+    }
+
+    public void reset() {
+        sunAmount = 300;
+        hovered = null;
+        hoverPlant = null;
+        isPaused = false;
+        mouseState = MouseState.NONE;
+        sunManager.removeAllSun();
+        mapObjects.reset();
+    }
+
+    public void loadLevels() {
+        System.out.println(assetManager);
+        ZombieManager zm = mapObjects.getZombies();
+        levels.put(1, new Level1(zm, assetManager));
+        levels.put(2, new Level2(zm, assetManager));
+    }
+
+    public Level getLevel(int level) {
+        return levels.get(level);
+    }
+
+
+    public void startLevel(int level) {
+        try {
+            mapObjects.getZombies().setLevel((Level) Class.forName("Level" + level).newInstance());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -272,9 +317,12 @@ public class GameScreen implements Screen {
             return null;
         }
 
-        WinningItem winningItem = mapObjects.getZombies().getLevel().getWinningItem();
+        WinningItem winningItem = null;
+        if (mapObjects.getZombies().getLevel() != null) {
+            winningItem = mapObjects.getZombies().getLevel().getWinningItem();
+        }
 
-        if(winningItem != null && winningItem.isHovered(worldMousePosition, this)){
+        if (winningItem != null && winningItem.isHovered(worldMousePosition, this)) {
             hovered = winningItem;
         }
 
@@ -344,7 +392,7 @@ public class GameScreen implements Screen {
             return;
         }
 
-        if(hovered instanceof WinningItem){
+        if (hovered instanceof WinningItem) {
             mapObjects.getZombies().getLevel().getWinningItem().onClick(this);
             return;
         }
@@ -469,6 +517,10 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
 
+        if (!gameStarted) {
+            return;
+        }
+
         int fps = Gdx.graphics.getFramesPerSecond();
         handleInput(delta);
         refreshPackets();
@@ -518,102 +570,8 @@ public class GameScreen implements Screen {
         shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
         shapeRenderer.begin(ShapeType.Filled);
         shapeRenderer.setColor(Color.RED);
-//			System.out.println("CURRENT ZOMBIES: ");
-//			for(int row = 0; row < mapObjects.map.length; row++) {
-//				ArrayList<Zombie> laneZombies = new ArrayList<>(mapObjects.getZombies().getLanezombies().get(row));
-////		System.out.println(zombiesCopy);
-//				for (Zombie zombie : laneZombies) {
-//					Vector2 rect = mapObjects.getDebug();
-//					rect.x = zombie.getHitbox().x;
-//					rect.y = zombie.getHitbox().y;
-//					shapeRenderer.rect(rect.x, rect.y, 3, 3);
-//				}
-//			}
-//		for(Map.Entry<Integer, Mower> entry : mapObjects.getMowers().getmowers().entrySet()){
-//
-//			Rectangle rect = entry.getValue().getHitbox();
-////			rect.x = entry.getValue().getPosition().x;
-////			rect.y = entry.getValue().getPosition().y;
-////			rect.add(new Vector2(TilemapOverlay.TILE_WIDTH/2, TilemapOverlay.TILE_HEIGHT/2));
-//			shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
-//		}
-//		for(Map.Entry<Vector2, TargetTile> entry: mapObjects.getTargetLayer().entrySet()){
-//			TargetTile tile = entry.getValue();
-//
-//
-//			Vector2 rect = mapObjects.getDebug();
-//			rect.x = tile.getWorldPos().x;
-//			rect.y = tile.getWorldPos().y;
-//			shapeRenderer.rect(rect.x, rect.y, 3, 3);
-//		}
-//		for(Map.Entry<Vector2, AbstractTile> entry: mapObjects.getBase().entrySet()) {
-//			AbstractTile tile = entry.getValue();
-//
-//
-//			Vector2 rect = mapObjects.getDebug();
-//			rect.x = tile.getWorldPos().x;
-//			rect.y = tile.getWorldPos().y;
-//			shapeRenderer.rect(rect.x, rect.y, 3, 3);
-//		}
-//		for(Map.Entry<Vector2, PlantTile> entry: mapObjects.getPlantLayer().entrySet()) {
-//			PlantTile tile = entry.getValue();
-//
-//
-//			Vector2 rect = mapObjects.getDebug();
-//			rect.x = tile.getWorldPos().x;
-//			rect.y = tile.getWorldPos().y;
-//			shapeRenderer.rect(rect.x, rect.y, 3, 3);
-//		}
-//		shapeRenderer.setColor(Color.TEAL);
-//		for(AbstractTile tile : new ArrayList<>(DebuggerSingleton.getInstance().getTiles())) {
-//			if(tile != null) {
-//				Vector2 rect = new Vector2();
-//
-//				rect.x = tile.getWorldPos().x;
-//				rect.y = tile.getWorldPos().y;
-//				shapeRenderer.rect(rect.x, rect.y, 5, 5);
-//			}
-//		}
-//
-//			for(int row = 0; row < mapObjects.map.length; row++) {
-//				ArrayList<Zombie> laneZombies = new ArrayList<>(mapObjects.getZombies().getLanezombies().get(row));
-//				for (Zombie zombie : laneZombies) {
-//					if(zombie.getTile() != null){
-//
-//						Vector2 rect = new Vector2();
-//
-//						rect.x = zombie.getTile().getWorldPos().x;
-//						rect.y = zombie.getTile().getWorldPos().y;
-//						shapeRenderer.rect(rect.x, rect.y, 5, 5);
-//					}
-//					Vector2 rect = new Vector2();
-//
-//					rect.x = zombie.getHitbox().x;
-//					rect.y = zombie.getHitbox().y;
-//					shapeRenderer.rect(rect.x, rect.y, 5, 5);
-//				}
-//			}
-//		for(UiSeedTile entry: mapObjects.getSeedPackets()) {
-//
-//
-//			Vector2 rect = mapObjects.getDebug();
-//			rect.x = entry.getWorldPos().x;
-//			rect.y = entry.getWorldPos().y;
-////			shapeRenderer.rect(rect.x, rect.y, 14, 19);
-//		}
-//		shapeRenderer.setColor(Color.BLUE);
-//		Vector2 testVector = new Vector2(3,1);
-//		shapeRenderer.rect(mapObjects.getBase().get(testVector).getWorldPos().x, mapObjects.getBase().get(testVector).getWorldPos().y, 3, 3);
-////		shapeRenderer.rect(mapObjects.getCorner().x, mapObjects.getCorner().y, 3, 3);
-//
-//		shapeRenderer.setColor(Color.GREEN);
-//		shapeRenderer.rect(mapObjects.getCorner2().x, mapObjects.getCorner2().y, 3, 3);
-//
-//		shapeRenderer.rect(0, 0, 3, 3);
 
         shapeRenderer.end();
-//
-//		}
     }
 
     public boolean getPaused() {
@@ -648,14 +606,18 @@ public class GameScreen implements Screen {
     @Override
     public void pause() {
         isPaused = true;
-        MusicManager.getInstance().pause();
+        if (MusicManager.getInstance() != null && MusicManager.getInstance().getCurrentlyPlaying() != null) {
+            MusicManager.getInstance().pause();
+        }
 
     }
 
     @Override
     public void resume() {
         isPaused = false;
-        MusicManager.getInstance().resume();
+        if (MusicManager.getInstance() != null && MusicManager.getInstance().getCurrentlyPlaying() != null) {
+            MusicManager.getInstance().resume();
+        }
     }
 
     @Override

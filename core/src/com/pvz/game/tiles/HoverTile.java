@@ -1,5 +1,6 @@
 package com.pvz.game.tiles;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -40,21 +41,21 @@ public class HoverTile extends AbstractTile implements Clickable {
 
 
     @Override
-    public boolean isHovered(Vector2 mousePosition, GameScreen gameScreen) {
+    public boolean isHovered(Vector2 mousePosition, Screen gameScreen) {
         // Default hover behavior for tiles
-        if (gameScreen.getMap().get(mousePosition.x, mousePosition.y) == null) {
+        if (((GameScreen) gameScreen).getMap().get(mousePosition.x, mousePosition.y) == null) {
             return false;
         }
         return true;
     }
 
     @Override
-    public void onClick(GameScreen gameScreen) {
-        if (gameScreen.getCurrentPlant() != null && gameScreen.getSunAmount() >= gameScreen.getCurrentPlant().getCost()) {
-            gameScreen.setSunAmount(gameScreen.getSunAmount() - gameScreen.getCurrentPlant().getCost());
-            gameScreen.getMap().plant(this, gameScreen.getCurrentPlant());
-            gameScreen.setHoverPlant(null);
-        }
+    public void onClick(Screen gameScreen) {
+//        if (gameScreen.getCurrentPlant() != null && gameScreen.getSunAmount() >= gameScreen.getCurrentPlant().getCost()) {
+//            gameScreen.setSunAmount(gameScreen.getSunAmount() - gameScreen.getCurrentPlant().getCost());
+//            gameScreen.getMap().plant(this, gameScreen.getCurrentPlant());
+//            gameScreen.setHoverPlant(null);
+//        }
 
 
     }

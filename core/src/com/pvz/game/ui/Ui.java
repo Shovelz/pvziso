@@ -1,6 +1,7 @@
 package com.pvz.game.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -24,10 +25,14 @@ public class Ui {
 	private Shovel shovel;
 	private PauseButton pauseButton;
 	private Menu menu;
+	private AssetManager assetManager;
 
 
-	public Ui(Vector2 c, GameScreen s) {
-		uiBG = new Texture("ui.png");
+	public Ui(Vector2 c, GameScreen s, AssetManager assetManager) {
+		this.assetManager = assetManager;
+		assetManager.load("ui.png", Texture.class);
+		assetManager.finishLoading();
+		uiBG = assetManager.get("ui.png", Texture.class);
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("upheavtt.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = 20; // Set the font size
@@ -38,7 +43,7 @@ public class Ui {
 		ui = new UiTile(uiBG, new Vector2(0, 0), new Vector2(corner.x + Tilemap.horribleBackgroundOffset.x,
 				corner.y + Tilemap.horribleBackgroundOffset.y));
 		screen = s;
-		shovel = new Shovel(screen.getMap(), ui.getWorldPos());
+		shovel = new Shovel(screen.getMap(), ui.getWorldPos(),assetManager);
 		pauseButton = new PauseButton(corner);
 
 		menu = new Menu(screen.getCamera());

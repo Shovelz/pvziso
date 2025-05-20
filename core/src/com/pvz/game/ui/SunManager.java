@@ -24,6 +24,10 @@ public class SunManager {
         suns.remove(sun);
     }
 
+    public void removeAllSun() {
+        suns.clear();
+    }
+
     public ArrayList<Sun> getSuns() {
         return suns;
     }

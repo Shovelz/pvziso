@@ -1,5 +1,6 @@
 package com.pvz.game.zombies;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -39,12 +40,15 @@ public class NormalZombie extends Zombie {
     private boolean diedToExplosion = false;
     private float groanTimer = 0f;
     private float nextGroanTime;
+    private AssetManager assetManager;
 
 
-    public NormalZombie() {
-        walkSheet = new Texture("zombieWalkSheet.png");
-        eatSheet = new Texture("zombieEatSheet.png");
-        deathSheet = new Texture("zombieDeadSheet.png");
+    public NormalZombie(AssetManager assetManager) {
+        this.assetManager = assetManager;
+        loadAssets();
+        walkSheet = assetManager.get("zombieWalkSheet.png", Texture.class);
+        eatSheet = assetManager.get("zombieEatSheet.png", Texture.class);
+        deathSheet = assetManager.get("zombieDeadSheet.png", Texture.class);
         explosionDeathSheet = new Texture("zombieDeadExplosionSheet.png");
         worldPos = new Vector2(x, y);
         walkAnimation = loadAnimations(width, height, walkSheet);
@@ -53,6 +57,15 @@ public class NormalZombie extends Zombie {
         hitbox = new Rectangle(worldPos.x, worldPos.y, 13, 22);
         currentAnimation = walkAnimation;
         setNextGroanTime();
+    }
+
+    private void loadAssets(){
+
+        assetManager.load("zombieWalkSheet.png", Texture.class);
+        assetManager.load("zombieEatSheet.png", Texture.class);
+        assetManager.load("zombieDeadSheet.png", Texture.class);
+
+        assetManager.finishLoading();
     }
 
 

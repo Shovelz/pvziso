@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.pvz.game.zombies.Zombie;
@@ -21,7 +22,6 @@ public class MowerManager {
 
 	public void addMower(int lane, Mower mower) {
 		mowers.put(lane, mower);
-		mower.addMowerManager(this);
 	}
 
 	public void removeMower(Mower mower) {
@@ -56,4 +56,5 @@ public class MowerManager {
 		}
 
 	}
+
 }

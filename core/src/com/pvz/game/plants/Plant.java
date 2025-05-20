@@ -31,6 +31,10 @@ public abstract class Plant implements Cloneable {
     protected int lane;
     protected boolean interactable;
 
+    public String getPacketTexture() {
+        return "0.png";
+    }
+
     private enum State {
         IDLE, FIRING
     }
