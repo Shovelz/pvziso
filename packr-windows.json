@@ -1,0 +1,14 @@
+{
+  "platform": "windows64",
+  "jdk": "jdks/windows64", 
+  "executable": "pvziso",
+  "classpath": ["desktop-fat-1.0.jar"],
+  "mainclass": "com.pvz.game.DesktopLauncher",
+  "vmargs": [
+    "-Xmx1G"
+  ],
+  "resources": [
+    "assets"
+  ],
+  "output": "dist/windows64"
+}

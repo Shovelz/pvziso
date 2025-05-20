@@ -1,0 +1,14 @@
+{
+  "platform": "mac",
+  "jdk": "jdks/mac", 
+  "executable": "pvziso",
+  "classpath": ["desktop-fat-1.0.jar"],
+  "mainclass": "com.pvz.game.DesktopLauncher",
+  "vmargs": [
+    "-Xmx1G"
+  ],
+  "resources": [
+    "assets"
+  ],
+  "output": "dist/mac"
+}

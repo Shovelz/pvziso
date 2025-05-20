@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.0" orientation="isometric" renderorder="left-down" width="9" height="6" tilewidth="48" tileheight="24" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="grass_tiles.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="9" height="6">
+  <data encoding="csv">
+2,3,2,3,2,3,2,3,2,
+1,2,1,2,1,2,1,2,1,
+2,3,2,3,2,3,2,3,2,
+1,2,1,2,1,2,1,2,1,
+2,3,2,3,2,3,2,3,2,
+1,2,1,2,1,2,1,2,1
+</data>
+ </layer>
+</map>

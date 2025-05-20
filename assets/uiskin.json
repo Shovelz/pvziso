@@ -1,0 +1,17 @@
+{
+  "textures": [
+    {
+      "name": "sun-icon",
+      "file": "sun_icon.png"
+    }
+  ],
+
+  "styles": {
+    "sunpoints": {
+      "icon": "sun-icon"
+      ,
+      "font": "default-font",
+      "fontColor": "yellow"
+    }
+  }
+}
