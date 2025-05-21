@@ -75,6 +75,7 @@ public class LevelSelectScreen implements Screen {
         }
         batch.end();
     }
+
     public Clickable getHovered() {
         // Get mouse position in screen coordinates
         int mouseX = Gdx.input.getX();
@@ -97,6 +98,10 @@ public class LevelSelectScreen implements Screen {
         game.startGame(level);
     }
 
+    public void reset(){
+        levelStarting = false;
+    }
+
     public void clickTriggered() {
 
         if (hovered instanceof LevelSelect && !levelStarting) {
@@ -110,7 +115,6 @@ public class LevelSelectScreen implements Screen {
 
 
         hovered = getHovered(); // Update hovered object
-
 
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             clickTriggered();

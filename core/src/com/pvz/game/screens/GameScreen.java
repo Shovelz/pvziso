@@ -25,6 +25,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.pvz.game.IsoGame;
 import com.pvz.game.TileMapSingleton;
 import com.pvz.game.Tilemap;
 import com.pvz.game.audio.MusicManager;
@@ -70,6 +71,10 @@ public class GameScreen implements Screen {
 
     private int hoverMode = -1;
 
+    public void finishGame() {
+        isoGame.backToLevelSelect();
+    }
+
 
     private enum MouseState {NONE, HOVER, CLICKED, DRAGGING}
 
@@ -94,11 +99,14 @@ public class GameScreen implements Screen {
 
     private HashMap<Integer, Level> levels = new HashMap<>();
     private boolean gameStarted = false;
+    private IsoGame isoGame;
+    private Level currentLevel;
 
 
-    public GameScreen(SpriteBatch batch, AssetManager assetManager) {
+    public GameScreen(SpriteBatch batch, IsoGame isoGame, AssetManager assetManager) {
         this.assetManager = assetManager;
         this.batch = batch;
+        this.isoGame = isoGame;
 
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         port = new FitViewport(1920 / 4, 1080 / 4, camera);
@@ -149,8 +157,13 @@ public class GameScreen implements Screen {
         Level newLevel = getLevel(level);
         if (newLevel != null) {
             mapObjects.getZombies().setLevel(newLevel);
+            currentLevel = newLevel;
             System.out.println("Set level to " + level);
         }
+    }
+
+    public Level getCurrentLevel(){
+        return currentLevel;
     }
 
     public void startGame() {
@@ -237,6 +250,7 @@ public class GameScreen implements Screen {
     }
 
     public void reset() {
+        gameStarted = false;
         sunAmount = 300;
         hovered = null;
         hoverPlant = null;
@@ -323,7 +337,7 @@ public class GameScreen implements Screen {
         }
 
         if (winningItem != null && winningItem.isHovered(worldMousePosition, this)) {
-            hovered = winningItem;
+            return winningItem;
         }
 
         if (prevHover != null) {
@@ -365,7 +379,10 @@ public class GameScreen implements Screen {
     }
 
     public void clickTriggered() {
-
+        if (hovered instanceof WinningItem) {
+            mapObjects.getZombies().getLevel().getWinningItem().onClick(this);
+            return;
+        }
         if (isPaused && hovered instanceof SliderButton) {
             hovered.onClick(this);
         }
@@ -389,11 +406,6 @@ public class GameScreen implements Screen {
         }
 
         if (isPaused) {
-            return;
-        }
-
-        if (hovered instanceof WinningItem) {
-            mapObjects.getZombies().getLevel().getWinningItem().onClick(this);
             return;
         }
 

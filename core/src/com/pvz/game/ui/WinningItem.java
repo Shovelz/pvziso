@@ -38,7 +38,7 @@ public class WinningItem implements Clickable {
         Vector2 randomPos = keys.get(new Random().nextInt(keys.size()));
 
         position = TileMapSingleton.getInstance().getMap().get(randomPos).getWorldPos();
-        hitbox = new Rectangle();
+        hitbox = new Rectangle(position.x, position.y, 14, 24);
         arrowPointA = position.y - 2;
         arrowPointB = position.y + 10;
         this.uiSeedTile = uiSeedTile;
@@ -71,6 +71,6 @@ public class WinningItem implements Clickable {
 
     @Override
     public void onClick(Screen gameScreen) {
-
+        ((GameScreen) gameScreen).finishGame();
     }
 }

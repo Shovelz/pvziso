@@ -8,6 +8,8 @@ import com.pvz.game.zombies.NormalZombie;
 import com.pvz.game.zombies.ZombieManager;
 
 public class Level2 extends Level {
+
+    protected static final int levelNumber = 2;
     private static final float LEVEL_DIFFICULTY = 0.5f;
     private static final int MAX_WAVE_SIZE = 2;
     protected UiSeedTile rewardPacket;

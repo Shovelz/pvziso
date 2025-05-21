@@ -33,7 +33,6 @@ public class ZombieManager {
 
     public void setLevel(Level l) {
         this.level = l;
-//        reset();
     }
 
 
@@ -66,8 +65,6 @@ public class ZombieManager {
         if (newFoes.isEmpty()) {
             return;
         }
-
-        System.out.println("Initializing " + newFoes.size() + " zombies");
 
 
         for (List<Zombie> zombiesList : laneZombiesPerWave.values()) {
@@ -120,7 +117,6 @@ public class ZombieManager {
             laneZombiesPerWave.get(lane).add(zombie);
             laneZombies.get(lane).add(zombie);
             prevZombiePos = zombie.getPosition();
-            System.out.println("Added zombie to lane " + lane + " at " + zombie.getPosition());
         }
 
 
@@ -173,13 +169,8 @@ public class ZombieManager {
     public void update(float delta) {
 
 
-        System.out.println("Before level update - Zombie count: " + zombies.size());
-// Store current zombies to check for changes
-        int zombieCountBefore = zombies.size();
-// Update level (this might trigger new wave spawning)
         level.update(delta);
-// Debug print after level update
-        System.out.println("After level update - Zombie count: " + zombies.size());
+
         for (Zombie zombie : new ArrayList<>(zombies)) {
             zombie.setMap(map);
             zombie.update(delta, map);
@@ -188,7 +179,6 @@ public class ZombieManager {
         for (Zombie zombie : new ArrayList<>(deadZombies)) {
             zombie.update(delta, map);
         }
-//        System.out.println(zombies);
     }
 
 
@@ -224,8 +214,8 @@ public class ZombieManager {
         zombies.clear();
         deadZombies.clear();
 
-//        laneZombies.clear();
-//        laneZombiesPerWave.clear();
+        laneZombies.clear();
+        laneZombiesPerWave.clear();
         prevZombiePos = null;
 
         for (int i = 0; i < map.map[0].length; i++) {
@@ -237,6 +227,5 @@ public class ZombieManager {
 
     public void startSpawning() {
         level.startSpawningWaves();
-        System.out.println("Started spawning zombies for level");
     }
 }

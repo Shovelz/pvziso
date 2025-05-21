@@ -18,7 +18,7 @@ public class IsoGame extends Game {
         this.assetManager = new AssetManager();
 
         levelSelectScreen = (new LevelSelectScreen(batch, this, assetManager));
-        gameScreen = new GameScreen(batch, assetManager);
+        gameScreen = new GameScreen(batch, this, assetManager);
         gameScreen.loadLevels();
         setScreen(levelSelectScreen);
     }
@@ -49,5 +49,14 @@ public class IsoGame extends Game {
     public SpriteBatch getBatch() {
         return this.batch;
 
+    }
+
+    public void backToLevelSelect() {
+        gameScreen.reset();
+        levelSelectScreen.reset();
+//        gameScreen.getCurrentLevel();
+        levelSelectScreen.show();
+        setScreen(levelSelectScreen);
+        gameScreen.hide();
     }
 }

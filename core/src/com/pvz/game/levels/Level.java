@@ -2,7 +2,6 @@ package com.pvz.game.levels;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.pvz.game.plants.Plant;
 import com.pvz.game.tiles.UiSeedTile;
 import com.pvz.game.ui.WinningItem;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 public abstract class Level {
 
 
-    protected final Vector2 levelNumber;
+    protected static final int levelNumber = 0;
     //Defaults for timers 0, 20
     protected float initialDelay = 0f, initialDelayTimer, timer, spawnZombieTimer = 1f;
     protected boolean hasStartedSpawning = false;
@@ -31,7 +30,6 @@ public abstract class Level {
 
     public Level(ZombieManager zombieManager, float difficultyRate, int maxWaveSize, AssetManager assetManager) {
         this.assetManager = assetManager;
-        levelNumber = new Vector2(1, 1);
         this.zombieManager = zombieManager;
         System.out.println(assetManager);
         generateFoes(assetManager);
@@ -42,10 +40,6 @@ public abstract class Level {
 
     public void startSpawningWaves() {
         waveSpawner = new WaveSpawner(foes, difficultyRate, maxWaveSize, assetManager);
-        // Check if waveSpawner is already initialized to avoid multiple initialization
-        if (waveSpawner == null) {
-            System.out.println("Wave spawner initialized with " + foes.length + " foe types");
-        }
     }
 
 
@@ -72,10 +66,8 @@ public abstract class Level {
 
     public void update(float delta) {
 
-        System.out.println("Start of loop");
         if (!hasStartedSpawning && initialDelayTimer < initialDelay) {
             initialDelayTimer += delta;
-            System.out.println("loop1");
             return;
         }
 
@@ -84,7 +76,6 @@ public abstract class Level {
             zombies = waveSpawner.spawnWave();
             zombieManager.initializeZombiesFromLevel(zombies);
             timer = 0;
-            System.out.println("loop2");
             return;
         }
 
@@ -97,7 +88,6 @@ public abstract class Level {
                 ArrayList<WaveSpawner.Foe> nextWave = waveSpawner.spawnWave();
 
                 if (!nextWave.isEmpty()) {
-                    System.out.println("Spawn a fresh wave with " + nextWave.size() + " zombies");
                     zombies = nextWave;
                     zombieManager.initializeZombiesFromLevel(zombies);
                 } else {
