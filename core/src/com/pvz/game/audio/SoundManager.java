@@ -35,6 +35,7 @@ public class SoundManager {
         load("splat3", "sounds/splat3.ogg");
         load("shovel", "sounds/shovel.ogg");
         load("points", "sounds/points.ogg");
+        load("win_music", "sounds/winmusic.ogg");
         load("lose_music", "sounds/losemusic.ogg");
         load("buzzer", "sounds/buzzer.ogg");
         load("readysetplant", "sounds/readysetplant.ogg");

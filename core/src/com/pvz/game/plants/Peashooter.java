@@ -11,7 +11,9 @@ import com.badlogic.gdx.math.Vector2;
 public class Peashooter extends Plant{
 
 	public Peashooter() {
-		super(new Texture("peashooter.png"), new Texture("peashooterSheet.png"), 20, 300, 1.5f, 0f,100, 2, 7.5f, true);
+		super("Peashooter", "Peashooters are your first line of defense. They shoot peas at attacking zombies.",
+				new Texture("peashooter.png"), new Texture("peashooterSheet.png"),
+				20, 300, 1.5f, 0f,100, 2, 7.5f, true);
 	}
 
 	@Override

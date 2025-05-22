@@ -12,6 +12,7 @@ import com.pvz.game.ui.SunManager;
 public abstract class Plant implements Cloneable {
 
     private String name;
+    private String description;
     private Texture texture;
     private Texture spriteSheet;
     private int damage;
@@ -41,8 +42,10 @@ public abstract class Plant implements Cloneable {
 
     ;
 
-    public Plant(Texture texture, Texture spriteSheet, int damage, int health, float reload, float startingReload, int cost, int range,
+    public Plant(String name, String description, Texture texture, Texture spriteSheet, int damage, int health, float reload, float startingReload, int cost, int range,
                  float recharge, boolean interactable) {
+        this.name = name;
+        this.description = description;
         this.texture = texture;
         this.spriteSheet = spriteSheet;
         this.damage = damage;
@@ -129,6 +132,10 @@ public abstract class Plant implements Cloneable {
         return name;
     }
 
+
+    public String getDescription() {
+        return description;
+    }
     public void setName(String name) {
         this.name = name;
     }

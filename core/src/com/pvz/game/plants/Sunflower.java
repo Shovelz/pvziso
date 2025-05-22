@@ -10,7 +10,10 @@ import com.badlogic.gdx.math.Vector2;
 public class Sunflower extends Plant {
 
     public Sunflower() {
-        super(new Texture("sunflower.png"), new Texture("sunflowerSheet.png"), 0, 300, 24f, 12f, 50, 0, 7.5f, true);
+//        super("Sunflower", "Potato Mines pack a powerful punch, but they need a while to arm themselves. You should plant them ahead of zombies. They will explode on contact.",
+                super("Sunflower", "Sunflowers are essential for you to produce extra sun. Try planting as many as you can!",
+                new Texture("sunflower.png"), new Texture("sunflowerSheet.png"),
+                0, 300, 24f, 12f, 50, 0, 7.5f, true);
     }
 
 

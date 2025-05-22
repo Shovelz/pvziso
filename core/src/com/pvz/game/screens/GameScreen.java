@@ -10,19 +10,18 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.pvz.game.IsoGame;
@@ -71,8 +70,8 @@ public class GameScreen implements Screen {
 
     private int hoverMode = -1;
 
-    public void finishGame() {
-        isoGame.backToLevelSelect();
+    public void finishGame(WinningItem item) {
+        isoGame.unlockPlant(item.getPlant());
     }
 
 
@@ -101,6 +100,8 @@ public class GameScreen implements Screen {
     private boolean gameStarted = false;
     private IsoGame isoGame;
     private Level currentLevel;
+    private RadialWhiteOutTransition radialWhiteOutTransition;
+    private boolean hidden = false;
 
 
     public GameScreen(SpriteBatch batch, IsoGame isoGame, AssetManager assetManager) {
@@ -179,9 +180,11 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        removeWhiteOut();
+        hidden = false;
 
-//        SoundManager.getInstance().play("readysetplant");
-//        MusicManager.getInstance().play("track2");
+        SoundManager.getInstance().play("readysetplant");
+        MusicManager.getInstance().play("track2");
     }
 
     public boolean getMouseReleased() {
@@ -246,6 +249,10 @@ public class GameScreen implements Screen {
             mapObjects.updateUI(delta);
 
             produceSkySun(delta);
+        }
+
+        if(radialWhiteOutTransition != null){
+            radialWhiteOutTransition.update(delta);
         }
     }
 
@@ -483,6 +490,22 @@ public class GameScreen implements Screen {
 
     }
 
+    public void removeWhiteOut(){
+        radialWhiteOutTransition = null;
+    }
+
+    public void whiteOutTransitionStart(WinningItem winningItem){
+        if(radialWhiteOutTransition != null){
+            return;
+        }
+        MusicManager.getInstance().pause();
+        SoundManager.getInstance().play("win_music");
+        radialWhiteOutTransition = new RadialWhiteOutTransition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 3f);
+        radialWhiteOutTransition.start(worldMousePosition.x, worldMousePosition.y,() -> {
+            finishGame(winningItem);
+        });
+    }
+
 
     public void setHoverPlant(Plant p) {
         hoverPlant = p;
@@ -529,7 +552,12 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
 
-        if (!gameStarted) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glEnable(GL20.GL_BLEND); // Enable transparency
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        if (!gameStarted || hidden) {
             return;
         }
 
@@ -549,11 +577,6 @@ public class GameScreen implements Screen {
         if (isPaused && !gameOver) {
             ui.updateMenu(worldMousePosition);
         }
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glEnable(GL20.GL_BLEND); // Enable transparency
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
         renderer.render();
         batch.begin();
         batch.end();
@@ -576,16 +599,19 @@ public class GameScreen implements Screen {
             pause();
         }
 
+        if(radialWhiteOutTransition != null){
+            radialWhiteOutTransition.render(batch);
+        }
         batch.end();
 
 
-        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
-        shapeRenderer.begin(ShapeType.Filled);
-        shapeRenderer.setColor(Color.RED);
 
-        shapeRenderer.end();
+
     }
 
+    public Viewport getViewport(){
+        return port;
+    }
     public boolean getPaused() {
         return isPaused;
     }
@@ -634,7 +660,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
-        // TODO Auto-generated method stub
+        ScreenUtils.clear(1, 1, 1, 1, true);
+        hidden = true;
 
     }
 

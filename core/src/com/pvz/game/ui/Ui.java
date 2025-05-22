@@ -33,11 +33,16 @@ public class Ui {
 		assetManager.load("ui.png", Texture.class);
 		assetManager.finishLoading();
 		uiBG = assetManager.get("ui.png", Texture.class);
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("upheavtt.ttf"));
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/upheavtt.ttf"));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = 20; // Set the font size
 		font = generator.generateFont(parameter);
 		font.setColor(1f, 1f, 1f, 1f);
+		// Disable anti-aliasing
+		parameter.minFilter = Texture.TextureFilter.Nearest;
+		parameter.magFilter = Texture.TextureFilter.Nearest;
+		parameter.genMipMaps = false;
+
 		corner = c;
 
 		ui = new UiTile(uiBG, new Vector2(0, 0), new Vector2(corner.x + Tilemap.horribleBackgroundOffset.x,

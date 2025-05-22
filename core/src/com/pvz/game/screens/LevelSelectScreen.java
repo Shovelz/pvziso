@@ -159,4 +159,8 @@ public class LevelSelectScreen implements Screen {
     public void dispose() {
 
     }
+
+    public Viewport getViewport() {
+        return port;
+    }
 }

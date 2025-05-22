@@ -7,7 +7,9 @@ import com.pvz.game.ui.SunManager;
 public class Walnut extends Plant {
 
     public Walnut() {
-        super(new Texture("walnut.png"), new Texture("walnutSheet.png"), 0, 4000, 0, 0, 50, 0, 30f, true);
+        super("Walnut", "Wall-nuts have hard shells which you can use to protect your other plants.",
+                new Texture("walnut.png"), new Texture("walnutSheet.png"),
+                0, 4000, 0, 0, 50, 0, 30f, true);
     }
 
     @Override

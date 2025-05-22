@@ -63,6 +63,9 @@ public class WinningItem implements Clickable {
 
     }
 
+    public Plant getPlant(){
+        return plant;
+    }
 
     @Override
     public boolean isHovered(Vector2 mousePosition, Screen gameScreen) {
@@ -71,6 +74,7 @@ public class WinningItem implements Clickable {
 
     @Override
     public void onClick(Screen gameScreen) {
-        ((GameScreen) gameScreen).finishGame();
+        ((GameScreen) gameScreen).whiteOutTransitionStart(this);
+//        ((GameScreen) gameScreen).finishGame(this);
     }
 }

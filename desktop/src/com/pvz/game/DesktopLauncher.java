@@ -11,6 +11,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("PVZ Isometric Game");
 		config.setWindowedMode(1920, 1080);
+//		config.setWindowedMode(480, 270);
 //		config.useVsync(true);
 		config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		config.setResizable(false);
