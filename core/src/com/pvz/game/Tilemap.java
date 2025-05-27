@@ -50,6 +50,7 @@ public class Tilemap {
             {"0", "0", "0", "0", "0", "0", "0", "0", "0"},};
 
     private ArrayList<Plant> plantsStatic = new ArrayList<Plant>();
+    private ArrayList<Plant> unlockedPlants = new ArrayList<Plant>();
 
     public static final float TILE_WIDTH = 24;
     public static final float TILE_HEIGHT = 12;
@@ -80,6 +81,10 @@ public class Tilemap {
 
         loadPlants();
         loadAssets();
+
+        unlockedPlants.add(plantsStatic.get(0));
+        unlockedPlants.add(plantsStatic.get(1));
+
         fillMap();
 
         grass = assetManager.get("grass.png", Texture.class);
@@ -87,6 +92,10 @@ public class Tilemap {
         houseBG = assetManager.get("background6x9.png", Texture.class);
         uiBG = assetManager.get("ui.png", Texture.class);
         uiSeeds = assetManager.get("seed_packet.png", Texture.class);
+
+    }
+
+    private void loadUnlockedPlantsIntoPackets() {
 
     }
 
@@ -104,7 +113,8 @@ public class Tilemap {
 
         // Add packets for plants
         for (Plant p : getPlantStatic()) {
-            assetManager.load("packets/" + p.getPacketTexture(), Texture.class);
+            System.out.println("Loaded plant texture" + p);
+            assetManager.load("packets/" + p.getName() + ".png", Texture.class);
         }
 
         assetManager.finishLoading();
@@ -122,7 +132,9 @@ public class Tilemap {
             float y = base.get(new Vector2(row, map[0].length - 1)).getWorldPos().y;
             float endX = base.get(new Vector2(row, 0)).getWorldPos().x + TILE_WIDTH;
             float endY = base.get(new Vector2(row, 0)).getWorldPos().y;
-            mowers.addMower(row, new Mower(x, y, endX, endY, row, assetManager));
+            Mower mower = new Mower(x, y, endX, endY, row, assetManager);
+            mowers.addMower(row, mower);
+            mower.addMowerManager(mowers);
         }
     }
 
@@ -151,8 +163,8 @@ public class Tilemap {
     private void loadPlants() {
         plantsStatic.add(new Peashooter());
         plantsStatic.add(new Sunflower());
-//        plantsStatic.add(new Walnut());
         plantsStatic.add(new CherryBomb());
+        plantsStatic.add(new Walnut());
     }
 
     public void update(float delta) {
@@ -203,22 +215,29 @@ public class Tilemap {
         return baseCorner;
     }
 
-    public void fillMap() {
+    public void initPackets(){
 
-        corner = baseCorner.add(new Vector2(map[0].length * TILE_WIDTH, -((map[0].length - 1) * TILE_HEIGHT)));
-        background = new BackgroundTile(houseBG, new Vector2(0, 0),
-                new Vector2(baseCorner.x + horribleBackgroundOffset.x, baseCorner.y + horribleBackgroundOffset.y));
-
-        for (int i = 0; i < plantsStatic.size(); i++) {
+//        corner = baseCorner.add(new Vector2(map[0].length * TILE_WIDTH, -((map[0].length - 1) * TILE_HEIGHT)));
+        for (int i = 0; i < unlockedPlants.size(); i++) {
             Vector2 offset = new Vector2(-29 + i * 18, 203 - i * 9);
-            String texturePath = "packets/" + plantsStatic.get(i).getPacketTexture();
+            String texturePath = "packets/" + unlockedPlants.get(i).getName() + ".png";
             Texture packetTex = assetManager.get(texturePath, Texture.class);
             UiSeedTile tile = new UiSeedTile(packetTex, new Vector2(0, 0),
                     new Vector2(baseCorner.x + offset.x, baseCorner.y + offset.y));
             tile.setHitbox(new Rectangle(baseCorner.x + offset.x, baseCorner.y + offset.y, 14, 24));
-            tile.setPlant(plantsStatic.get(i));
+            tile.setPlant(unlockedPlants.get(i));
             seedPackets.add(tile);
         }
+        System.out.println("HERRRRRRRRRRREEEEE");
+        System.out.println(seedPackets);
+    }
+
+    public void fillMap() {
+
+        corner = baseCorner.add(new Vector2(map[0].length * TILE_WIDTH, -((map[0].length - 1) * TILE_HEIGHT)));
+       initPackets();
+        background = new BackgroundTile(houseBG, new Vector2(0, 0),
+                new Vector2(baseCorner.x + horribleBackgroundOffset.x, baseCorner.y + horribleBackgroundOffset.y));
 
         Map<Vector2, AbstractTile> base = new HashMap<Vector2, AbstractTile>();
         for (int row = 0; row < map.length; row++) {
@@ -322,15 +341,22 @@ public class Tilemap {
         return plantsStatic;
     }
 
+    public void addUnlockedPlant(Plant plant){
+        unlockedPlants.add(plant);
+    }
+
     public void reset() {
-        System.out.println("tilemap reset");
+        System.out.println("RESETTTT");
         seedPackets.clear();
         plantsStatic.clear();
         regenerateCornerPos();
 
-        loadPlants();
+        loadUnlockedPlantsIntoPackets();
+        initPackets();
         fillMap();
         loadMowers();
         zombies.reset();
     }
+
+
 }

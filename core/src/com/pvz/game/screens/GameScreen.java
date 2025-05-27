@@ -32,6 +32,7 @@ import com.pvz.game.audio.SoundManager;
 import com.pvz.game.levels.Level;
 import com.pvz.game.levels.Level1;
 import com.pvz.game.levels.Level2;
+import com.pvz.game.levels.Level3;
 import com.pvz.game.tiles.*;
 import com.pvz.game.ui.*;
 import com.pvz.game.plants.*;
@@ -71,11 +72,12 @@ public class GameScreen implements Screen {
     private int hoverMode = -1;
 
     public void finishGame(WinningItem item) {
+        mapObjects.addUnlockedPlant(item.getPlant());
         isoGame.unlockPlant(item.getPlant());
     }
 
 
-    private enum MouseState {NONE, HOVER, CLICKED, DRAGGING}
+    public enum MouseState {NONE, HOVER, CLICKED, DRAGGING}
 
     private MouseState mouseState;
 
@@ -272,6 +274,7 @@ public class GameScreen implements Screen {
         ZombieManager zm = mapObjects.getZombies();
         levels.put(1, new Level1(zm, assetManager));
         levels.put(2, new Level2(zm, assetManager));
+        levels.put(3, new Level3(zm, assetManager));
     }
 
     public Level getLevel(int level) {
@@ -587,6 +590,7 @@ public class GameScreen implements Screen {
         mapObjects.render(batch, delta);
         ui.render(batch, delta);
         mapObjects.renderUI(batch, delta);
+
         sunManager.render(batch, delta);
 
         ui.renderShovel(batch, delta);

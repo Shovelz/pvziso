@@ -24,14 +24,14 @@ import java.util.Random;
 public class WinningItem implements Clickable {
 
     private Plant plant;
-    private UiSeedTile uiSeedTile;
+    private Texture packetTexture;
     private Rectangle hitbox;
     private Vector2 position;
     private Texture arrow = new Texture("arrow.png");
     private float arrowPointA, arrowPointB;
     private float timer, timerRate = 50f, arrowAnimationDirection = 1;
 
-    public WinningItem(Plant plant, UiSeedTile uiSeedTile){
+    public WinningItem(Plant plant, Texture packetTexture){
         this.plant = plant;
         Map<Vector2, AbstractTile> map = TileMapSingleton.getInstance().getMap();
         List<Vector2> keys = new ArrayList<>(map.keySet());
@@ -41,7 +41,7 @@ public class WinningItem implements Clickable {
         hitbox = new Rectangle(position.x, position.y, 14, 24);
         arrowPointA = position.y - 2;
         arrowPointB = position.y + 10;
-        this.uiSeedTile = uiSeedTile;
+        this.packetTexture = packetTexture;
     }
 
     public void render(SpriteBatch batch, float delta){
@@ -58,8 +58,8 @@ public class WinningItem implements Clickable {
         float t = timer / 100f;
         float arrowY = com.badlogic.gdx.math.Interpolation.sine.apply(arrowPointA, arrowPointB, t);
 
-        batch.draw(uiSeedTile.getTexture(), position.x, position.y);
-        batch.draw(arrow, position.x + 2, arrowY + uiSeedTile.getTexture().getHeight());
+        batch.draw(packetTexture, position.x, position.y);
+        batch.draw(arrow, position.x + 2, arrowY +packetTexture.getHeight());
 
     }
 

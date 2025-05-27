@@ -33,7 +33,7 @@ public abstract class Plant implements Cloneable {
     protected boolean interactable;
 
     public String getPacketTexture() {
-        return "0.png";
+        return "Peashooter.png";
     }
 
     private enum State {

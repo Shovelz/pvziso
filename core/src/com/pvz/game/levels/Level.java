@@ -14,7 +14,7 @@ public abstract class Level {
 
     protected static final int levelNumber = 0;
     //Defaults for timers 0, 20
-    protected float initialDelay = 0f, initialDelayTimer, timer, spawnZombieTimer = 1f;
+    protected float initialDelay = 0f, initialDelayTimer, timer, spawnZombieTimer = 15f;
     protected boolean hasStartedSpawning = false;
     protected WaveSpawner waveSpawner;
     protected ArrayList<WaveSpawner.Foe> zombies = new ArrayList<>();

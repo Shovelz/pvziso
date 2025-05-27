@@ -60,8 +60,8 @@ public class ConeZombie extends Zombie {
 
     private void loadAssets(){
 
-        assetManager.load("zombieWalkSheet.png", Texture.class);
-        assetManager.load("zombieEatSheet.png", Texture.class);
+        assetManager.load("coneZombieWalkSheet.png", Texture.class);
+        assetManager.load("coneZombieEatSheet.png", Texture.class);
         assetManager.load("zombieDeadSheet.png", Texture.class);
         assetManager.load("zombieDeadExplosionSheet.png", Texture.class);
 

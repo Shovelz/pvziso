@@ -37,7 +37,13 @@ public class UiSeedTile extends AbstractTile implements Clickable {
         if (rechargeProgress < 100f || (dark || selected)) {
             batch.setShader(grayscaleShader);
         }
+
+        System.out.println("HERERERERE3");
+        System.out.println(worldPos);
+        System.out.println("Texture: " + texture);
+
         batch.draw(texture, worldPos.x, worldPos.y);
+//        batch.draw(texture, 100, 100);
         batch.setShader(null); // Reset to default shader
     }
 

@@ -1,9 +1,7 @@
 package com.pvz.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -42,7 +40,6 @@ public class IsoGame extends Game {
         levelSelectScreen.hide();
         setScreen(gameScreen);
         gameScreen.startGame();
-        gameScreen.show();
     }
 
     @Override
@@ -73,7 +70,6 @@ public class IsoGame extends Game {
         gameScreen.reset();
         gameScreen.hide();
         levelSelectScreen.reset();
-//        gameScreen.getCurrentLevel();
         levelSelectScreen.show();
         setScreen(levelSelectScreen);
     }

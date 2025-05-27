@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -31,6 +28,7 @@ public class LevelSelectScreen implements Screen {
     private ArrayList<LevelSelect> levels = new ArrayList<>();
     private boolean levelStarting = false;
     private AssetManager assetManager;
+    private GameScreen.MouseState mouseState;
 
     public LevelSelectScreen(SpriteBatch batch, IsoGame game, AssetManager assetManager){
         this.assetManager = assetManager;
@@ -44,11 +42,12 @@ public class LevelSelectScreen implements Screen {
         camera.update();
 
         loadLevelBoxes();
+        mouseState = GameScreen.MouseState.NONE;
     }
 
     private void loadLevelBoxes(){
-        for(int i = 1; i < 3; i++) {
-            levels.add(new LevelSelect(new Vector2(100 + (i*70), 100), i, assetManager));
+        for(int i = 1; i < 4; i++) {
+            levels.add(new LevelSelect(new Vector2(70 + (i*55), 100), i, assetManager));
         }
     }
 
@@ -67,6 +66,11 @@ public class LevelSelectScreen implements Screen {
 
 
         update(delta);
+        if (mouseState == GameScreen.MouseState.NONE) {
+            Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+        } else {
+            Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
+        }
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(background, 0, 0, port.getWorldWidth(), port.getWorldHeight());
@@ -85,6 +89,12 @@ public class LevelSelectScreen implements Screen {
         camera.unproject(unprojectVector.set(mouseX, mouseY, 0.0f));
         worldMousePosition.set(unprojectVector.x, unprojectVector.y);
 
+
+        if (hovered != null) {
+            mouseState = GameScreen.MouseState.HOVER;
+        } else {
+            mouseState = GameScreen.MouseState.NONE; // Reset if nothing is hovered
+        }
         for(LevelSelect level : levels){
             if( level.isHovered(worldMousePosition, this)) {
                 return level;
