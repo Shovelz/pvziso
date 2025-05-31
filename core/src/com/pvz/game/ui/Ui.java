@@ -105,6 +105,10 @@ public class Ui {
 		return menu.getMenuButton();
 	}
 
+	public Clickable getBackToLevelsButton() {
+		return menu.getBackToLevelsButton();
+	}
+
 	public Clickable getPauseButton() {
 		return pauseButton;
 	}

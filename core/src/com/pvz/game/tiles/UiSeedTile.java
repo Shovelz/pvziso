@@ -24,7 +24,7 @@ public class UiSeedTile extends AbstractTile implements Clickable {
     private float rechargeMax = 0;
     private float time = 0f;
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
-    ShaderProgram grayscaleShader = new ShaderProgram(Gdx.files.internal("default.vert"), Gdx.files.internal("grayscale.frag"));
+    public static final ShaderProgram grayscaleShader = new ShaderProgram(Gdx.files.internal("default.vert"), Gdx.files.internal("grayscale.frag"));
     private boolean dark = false;
     private boolean selected = false;
 
@@ -34,16 +34,12 @@ public class UiSeedTile extends AbstractTile implements Clickable {
 
     @Override
     public void render(SpriteBatch batch) {
+
         if (rechargeProgress < 100f || (dark || selected)) {
             batch.setShader(grayscaleShader);
         }
 
-        System.out.println("HERERERERE3");
-        System.out.println(worldPos);
-        System.out.println("Texture: " + texture);
-
         batch.draw(texture, worldPos.x, worldPos.y);
-//        batch.draw(texture, 100, 100);
         batch.setShader(null); // Reset to default shader
     }
 
@@ -88,8 +84,9 @@ public class UiSeedTile extends AbstractTile implements Clickable {
             batch.end();
 
             // Adjust Y position to match cropped part
-            shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+            shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
             Color gray = Color.valueOf("5f5f5f");
             gray.a = 0.5f;
             shapeRenderer.setColor(gray);
@@ -106,6 +103,7 @@ public class UiSeedTile extends AbstractTile implements Clickable {
             shapeRenderer.triangle(x1, y1, x3, y3, x4, y4);
 
             shapeRenderer.end();
+
             batch.begin();
             batch.draw(rechargeBarTopTexture, hitbox.x, hitbox.y - rechargePercentage - 0.35f, hitbox.width, hitbox.height); // Draw cropped region
             batch.draw(rechargeBarBottomTexture, hitbox.x, hitbox.y, hitbox.width, hitbox.height); // Draw cropped region

@@ -46,14 +46,16 @@ public class LevelSelectScreen implements Screen {
     }
 
     private void loadLevelBoxes(){
-        for(int i = 1; i < 4; i++) {
-            levels.add(new LevelSelect(new Vector2(70 + (i*55), 100), i, assetManager));
+        for(int i = 1; i < 5; i++) {
+            levels.add(new LevelSelect(new Vector2(84 + (i*55), 100), i, assetManager, game.getGameScreen()));
         }
     }
 
     @Override
     public void show() {
-
+        for(LevelSelect levelSelect : levels){
+            levelSelect.setNonSelectable(!game.isPrevLevelCompleted(levelSelect.getLevel()));
+        }
     }
 
     @Override
@@ -114,7 +116,8 @@ public class LevelSelectScreen implements Screen {
 
     public void clickTriggered() {
 
-        if (hovered instanceof LevelSelect && !levelStarting) {
+        if (hovered instanceof LevelSelect && !levelStarting
+                && game.isPrevLevelCompleted(((LevelSelect) hovered).getLevel())){
             hovered.onClick(this);
             levelStarting = true;
             return;
@@ -122,7 +125,6 @@ public class LevelSelectScreen implements Screen {
     }
 
     public void update(float delta) {
-
 
         hovered = getHovered(); // Update hovered object
 

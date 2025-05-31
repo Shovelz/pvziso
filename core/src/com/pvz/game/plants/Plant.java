@@ -32,6 +32,8 @@ public abstract class Plant implements Cloneable {
     protected int lane;
     protected boolean interactable;
 
+
+
     public String getPacketTexture() {
         return "Peashooter.png";
     }
@@ -40,7 +42,7 @@ public abstract class Plant implements Cloneable {
         IDLE, FIRING
     }
 
-    ;
+
 
     public Plant(String name, String description, Texture texture, Texture spriteSheet, int damage, int health, float reload, float startingReload, int cost, int range,
                  float recharge, boolean interactable) {

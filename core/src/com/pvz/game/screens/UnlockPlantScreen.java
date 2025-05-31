@@ -173,7 +173,7 @@ public class UnlockPlantScreen implements Screen {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             clickTriggered();
         }
-        nextButton.setHovered(hovered != null && hovered.equals(nextButton) ? true : false);
+        nextButton.setHovered(hovered != null && hovered.equals(nextButton));
 
         camera.update();
     }

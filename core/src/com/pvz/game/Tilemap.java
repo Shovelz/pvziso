@@ -34,7 +34,6 @@ public class Tilemap {
     private Texture uiSeeds;
 
     private TiledMap isoMap;
-    private Vector2 baseCorner = new Vector2();
 
     private BackgroundTile background;
     private ArrayList<UiSeedTile> seedPackets;
@@ -61,7 +60,7 @@ public class Tilemap {
     public static Vector2 horribleBackgroundOffset = new Vector2(-TILE_WIDTH * 14 + TILE_WIDTH / 2 + 1, -TILE_HEIGHT * 3 + TILE_HEIGHT / 4 - 1);
 
     private MowerManager mowers;
-    private Vector2 corner;
+    private Vector2 corner = new Vector2(0, 0);
     private ZombieManager zombies;
 
     private GameScreen screen;
@@ -83,7 +82,6 @@ public class Tilemap {
         loadAssets();
 
         unlockedPlants.add(plantsStatic.get(0));
-        unlockedPlants.add(plantsStatic.get(1));
 
         fillMap();
 
@@ -99,10 +97,10 @@ public class Tilemap {
 
     }
 
-    public void regenerateCornerPos(){
+    public void regenerateCornerPos() {
 
-        baseCorner.x = isoMap.getLayers().get(0).getOffsetX();
-        baseCorner.y = isoMap.getLayers().get(0).getOffsetY();
+        corner.x = isoMap.getLayers().get(0).getOffsetX();
+        corner.y = isoMap.getLayers().get(0).getOffsetY();
     }
 
     private void loadAssets() {
@@ -208,14 +206,13 @@ public class Tilemap {
             tile.render(batch);
             tile.renderRecharge(batch, delta, camera);
         }
-
     }
 
     public Vector2 getCorner() {
-        return baseCorner;
+        return corner;
     }
 
-    public void initPackets(){
+    public void initPackets() {
 
 //        corner = baseCorner.add(new Vector2(map[0].length * TILE_WIDTH, -((map[0].length - 1) * TILE_HEIGHT)));
         for (int i = 0; i < unlockedPlants.size(); i++) {
@@ -223,21 +220,18 @@ public class Tilemap {
             String texturePath = "packets/" + unlockedPlants.get(i).getName() + ".png";
             Texture packetTex = assetManager.get(texturePath, Texture.class);
             UiSeedTile tile = new UiSeedTile(packetTex, new Vector2(0, 0),
-                    new Vector2(baseCorner.x + offset.x, baseCorner.y + offset.y));
-            tile.setHitbox(new Rectangle(baseCorner.x + offset.x, baseCorner.y + offset.y, 14, 24));
+                    new Vector2(corner.x + offset.x, corner.y + offset.y));
+            tile.setHitbox(new Rectangle(corner.x + offset.x, corner.y + offset.y, 14, 24));
             tile.setPlant(unlockedPlants.get(i));
             seedPackets.add(tile);
         }
-        System.out.println("HERRRRRRRRRRREEEEE");
-        System.out.println(seedPackets);
     }
 
     public void fillMap() {
-
-        corner = baseCorner.add(new Vector2(map[0].length * TILE_WIDTH, -((map[0].length - 1) * TILE_HEIGHT)));
-       initPackets();
+        corner = (new Vector2(map[0].length * TILE_WIDTH, -((map[0].length - 1) * TILE_HEIGHT)));
+        initPackets();
         background = new BackgroundTile(houseBG, new Vector2(0, 0),
-                new Vector2(baseCorner.x + horribleBackgroundOffset.x, baseCorner.y + horribleBackgroundOffset.y));
+                new Vector2(corner.x + horribleBackgroundOffset.x, corner.y + horribleBackgroundOffset.y));
 
         Map<Vector2, AbstractTile> base = new HashMap<Vector2, AbstractTile>();
         for (int row = 0; row < map.length; row++) {
@@ -250,7 +244,7 @@ public class Tilemap {
 
         TileMapSingleton.getInstance().setMap(base);
 
-        if(zombies == null) {
+        if (zombies == null) {
             zombies = new ZombieManager(this);
         }
 
@@ -262,7 +256,7 @@ public class Tilemap {
                         new PlantTile(null, new Vector2(row, col), new Vector2(x, y), base, sunManager, zombies));
             }
         }
-        if(mowers == null) {
+        if (mowers == null) {
             mowers = new MowerManager(zombies);
         }
         loadMowers();
@@ -341,18 +335,16 @@ public class Tilemap {
         return plantsStatic;
     }
 
-    public void addUnlockedPlant(Plant plant){
+    public void addUnlockedPlant(Plant plant) {
         unlockedPlants.add(plant);
     }
 
     public void reset() {
-        System.out.println("RESETTTT");
         seedPackets.clear();
         plantsStatic.clear();
         regenerateCornerPos();
 
         loadUnlockedPlantsIntoPackets();
-        initPackets();
         fillMap();
         loadMowers();
         zombies.reset();

@@ -12,9 +12,9 @@ import java.util.ArrayList;
 public abstract class Level {
 
 
-    protected static final int levelNumber = 0;
+    protected int levelNumber = 0;
     //Defaults for timers 0, 20
-    protected float initialDelay = 0f, initialDelayTimer, timer, spawnZombieTimer = 15f;
+    protected float initialDelay = 20f, initialDelayTimer, timer, spawnZombieTimer = 15f;
     protected boolean hasStartedSpawning = false;
     protected WaveSpawner waveSpawner;
     protected ArrayList<WaveSpawner.Foe> zombies = new ArrayList<>();
@@ -27,11 +27,11 @@ public abstract class Level {
     protected float difficultyRate;
     protected int maxWaveSize;
     private AssetManager assetManager;
+    protected int startingSun = 50;
 
     public Level(ZombieManager zombieManager, float difficultyRate, int maxWaveSize, AssetManager assetManager) {
         this.assetManager = assetManager;
         this.zombieManager = zombieManager;
-        System.out.println(assetManager);
         generateFoes(assetManager);
 
         this.difficultyRate = difficultyRate;
@@ -115,5 +115,13 @@ public abstract class Level {
 
     public WinningItem getWinningItem() {
         return winningItem;
+    }
+
+    public int getStartingSun() {
+       return startingSun;
+    }
+
+    public int getLevelNumber() {
+        return levelNumber;
     }
 }

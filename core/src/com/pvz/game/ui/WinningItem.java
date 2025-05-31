@@ -3,17 +3,13 @@ package com.pvz.game.ui;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.pvz.game.TileMapSingleton;
-import com.pvz.game.Tilemap;
 import com.pvz.game.plants.Plant;
 import com.pvz.game.screens.Clickable;
 import com.pvz.game.screens.GameScreen;
 import com.pvz.game.tiles.AbstractTile;
-import com.pvz.game.tiles.UiSeedTile;
 
 import java.util.ArrayList;
 import java.util.List;

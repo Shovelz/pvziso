@@ -210,7 +210,6 @@ public class ZombieManager {
 
 
     public void reset() {
-        System.out.println("reset");
         zombies.clear();
         deadZombies.clear();
 

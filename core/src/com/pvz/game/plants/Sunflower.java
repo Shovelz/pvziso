@@ -16,7 +16,6 @@ public class Sunflower extends Plant {
                 0, 300, 24f, 12f, 50, 0, 7.5f, true);
     }
 
-
     @Override
     public String getPacketTexture(){
         return "1.png";

@@ -29,10 +29,7 @@ import com.pvz.game.TileMapSingleton;
 import com.pvz.game.Tilemap;
 import com.pvz.game.audio.MusicManager;
 import com.pvz.game.audio.SoundManager;
-import com.pvz.game.levels.Level;
-import com.pvz.game.levels.Level1;
-import com.pvz.game.levels.Level2;
-import com.pvz.game.levels.Level3;
+import com.pvz.game.levels.*;
 import com.pvz.game.tiles.*;
 import com.pvz.game.ui.*;
 import com.pvz.game.plants.*;
@@ -71,11 +68,6 @@ public class GameScreen implements Screen {
 
     private int hoverMode = -1;
 
-    public void finishGame(WinningItem item) {
-        mapObjects.addUnlockedPlant(item.getPlant());
-        isoGame.unlockPlant(item.getPlant());
-    }
-
 
     public enum MouseState {NONE, HOVER, CLICKED, DRAGGING}
 
@@ -83,7 +75,7 @@ public class GameScreen implements Screen {
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
-    private Integer sunAmount = 300;
+    private Integer sunAmount = 50;
 
     private Ui ui;
 
@@ -157,6 +149,7 @@ public class GameScreen implements Screen {
     }
 
     public void setLevel(int level) {
+        System.out.println("Set level" + level);
         Level newLevel = getLevel(level);
         if (newLevel != null) {
             mapObjects.getZombies().setLevel(newLevel);
@@ -260,7 +253,7 @@ public class GameScreen implements Screen {
 
     public void reset() {
         gameStarted = false;
-        sunAmount = 300;
+        sunAmount = currentLevel.getStartingSun();
         hovered = null;
         hoverPlant = null;
         isPaused = false;
@@ -270,11 +263,11 @@ public class GameScreen implements Screen {
     }
 
     public void loadLevels() {
-        System.out.println(assetManager);
         ZombieManager zm = mapObjects.getZombies();
         levels.put(1, new Level1(zm, assetManager));
         levels.put(2, new Level2(zm, assetManager));
         levels.put(3, new Level3(zm, assetManager));
+        levels.put(4, new Level4(zm, assetManager));
     }
 
     public Level getLevel(int level) {
@@ -327,6 +320,9 @@ public class GameScreen implements Screen {
                     return sliderButton;
                 }
             }
+        }
+        if (isPaused && ui.getBackToLevelsButton().isHovered(worldMousePosition, this)) {
+            return ui.getBackToLevelsButton();
         }
 
         if (isPaused && ui.getMenuButton().isHovered(worldMousePosition, this)) {
@@ -389,6 +385,7 @@ public class GameScreen implements Screen {
     }
 
     public void clickTriggered() {
+
         if (hovered instanceof WinningItem) {
             mapObjects.getZombies().getLevel().getWinningItem().onClick(this);
             return;
@@ -396,7 +393,6 @@ public class GameScreen implements Screen {
         if (isPaused && hovered instanceof SliderButton) {
             hovered.onClick(this);
         }
-
 
         if (isPaused) {
             for (SliderButton sliderButton : ui.getSlider()) {
@@ -406,7 +402,8 @@ public class GameScreen implements Screen {
             }
         }
 
-        if (isPaused && hovered instanceof MenuButton) {
+
+        if (isPaused && (hovered instanceof MenuButton || hovered instanceof BackToLevelSelectButton)) {
             hovered.onClick(this);
             return;
         }
@@ -504,11 +501,12 @@ public class GameScreen implements Screen {
         MusicManager.getInstance().pause();
         SoundManager.getInstance().play("win_music");
         radialWhiteOutTransition = new RadialWhiteOutTransition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 3f);
-        radialWhiteOutTransition.start(worldMousePosition.x, worldMousePosition.y,() -> {
-            finishGame(winningItem);
-        });
+        radialWhiteOutTransition.start(worldMousePosition.x, worldMousePosition.y,() -> finishGame(winningItem));
     }
 
+    public void toLevelScreen(){
+        isoGame.backToLevelSelect();
+    }
 
     public void setHoverPlant(Plant p) {
         hoverPlant = p;
@@ -581,8 +579,6 @@ public class GameScreen implements Screen {
             ui.updateMenu(worldMousePosition);
         }
         renderer.render();
-        batch.begin();
-        batch.end();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -607,10 +603,6 @@ public class GameScreen implements Screen {
             radialWhiteOutTransition.render(batch);
         }
         batch.end();
-
-
-
-
     }
 
     public Viewport getViewport(){
@@ -624,6 +616,11 @@ public class GameScreen implements Screen {
         sunAmount += sun;
     }
 
+    public void finishGame(WinningItem item) {
+        mapObjects.addUnlockedPlant(item.getPlant());
+        isoGame.unlockPlant(item.getPlant());
+        isoGame.addCompletedLevel(currentLevel);
+    }
 
     @Override
     public void resize(int width, int height) {

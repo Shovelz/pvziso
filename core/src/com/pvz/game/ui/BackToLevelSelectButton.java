@@ -9,18 +9,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.pvz.game.screens.Clickable;
 import com.pvz.game.screens.GameScreen;
 
-public class MenuButton implements Clickable {
+public class BackToLevelSelectButton implements Clickable {
 
     private Texture buttonSprite;
     private Rectangle hitbox;
     private Camera camera;
 
-    public MenuButton(Camera cam){
+    public BackToLevelSelectButton(Camera cam){
         camera = cam;
-        buttonSprite = new Texture("PauseMenuButton.png");
+        buttonSprite = new Texture("BackToMenuButton.png");
 
         Vector2 newDimensions = new Vector2(buttonSprite.getWidth(),buttonSprite.getHeight());
-        hitbox = new Rectangle( camera.position.x - newDimensions.x/2, camera.position.y - newDimensions.y/2 - 35, newDimensions.x, newDimensions.y);
+        hitbox = new Rectangle( camera.position.x - newDimensions.x/2, camera.position.y - newDimensions.y/2 - 7, newDimensions.x, newDimensions.y);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class MenuButton implements Clickable {
 
     @Override
     public void onClick(Screen gameScreen) {
-        gameScreen.resume();
+        ((GameScreen) gameScreen).toLevelScreen();
     }
 
     public void render(SpriteBatch batch){

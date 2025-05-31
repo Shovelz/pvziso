@@ -12,7 +12,6 @@ import com.pvz.game.zombies.ZombieManager;
 
 public class Level3 extends Level {
 
-    protected static final int levelNumber = 3;
     private static final float LEVEL_DIFFICULTY = 1f;
     private static final int MAX_WAVE_SIZE = 5;
     protected Texture rewardPacket;
@@ -26,14 +25,15 @@ public class Level3 extends Level {
 
         this.rewardPacket = new Texture("packets/" + rewardPlant.getName() + ".png");
         this.assetManager = assetManager;
+        this.levelNumber = 3;
     }
 
     @Override
     protected void generateFoes(AssetManager assetManager) {
         this.foes = new WaveSpawner.Foe[]{
-                new WaveSpawner.Foe(new NormalZombie(assetManager), 2, 1, 1),
-                new WaveSpawner.Foe(new ConeZombie(assetManager), 15, 3, 3),
-                new WaveSpawner.Foe(new BucketZombie(assetManager), 2, 4, 7)
+                new WaveSpawner.Foe(new NormalZombie(assetManager), 20, 1, 1),
+                new WaveSpawner.Foe(new ConeZombie(assetManager), 9, 3, 3),
+//                new WaveSpawner.Foe(new BucketZombie(assetManager), 2, 4, 7)
         };
 
     }

@@ -26,6 +26,9 @@ public class Peashooter extends Plant{
 	}
 
 	public void action(SunManager sunManager) {
+		if(tile.getZombieManager().getLanezombies().get(tile.getLane()).isEmpty()){
+			return;
+		}
 		SoundManager.getInstance().play("pea_shoot"+ MathUtils.random(1,2));
 		tile.addProjectile(fire());
 	}
