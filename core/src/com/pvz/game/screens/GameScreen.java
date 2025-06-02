@@ -179,7 +179,7 @@ public class GameScreen implements Screen {
         hidden = false;
 
         SoundManager.getInstance().play("readysetplant");
-        MusicManager.getInstance().play("track2");
+        MusicManager.getInstance().play("track2", true);
     }
 
     public boolean getMouseReleased() {

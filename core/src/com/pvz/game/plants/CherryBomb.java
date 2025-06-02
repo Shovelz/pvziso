@@ -13,7 +13,7 @@ public class CherryBomb extends Plant{
 	public CherryBomb() {
 		super("Cherry-Bomb", "Cherry Bombs can blow up all zombies in an area. They have a short fuse so plant them near zombies.",
 				new Texture("cherry.png"), new Texture("cherrySheet.png"),
-				0, 300, 1.5f, 0f, 150, 0, 2.5f, false);
+				0, 300, 1.5f, 0f, 150, 0, 45f, false);
 	}
 
 	@Override

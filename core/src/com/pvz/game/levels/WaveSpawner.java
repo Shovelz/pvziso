@@ -67,8 +67,16 @@ public class WaveSpawner {
         incrementWave();
     }
 
-    public List<Foe> getSpawnableFoes(){
-        return spawnableFoes;
+    public boolean isSpawnableEmpty(){
+        Foe[] allFoes = foes;
+        for (Foe f : allFoes) {
+            if (f.spawnCount < f.rate){
+                return false;
+            }
+        }
+
+
+        return true;
     }
 
 

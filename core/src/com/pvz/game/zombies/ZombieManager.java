@@ -3,10 +3,11 @@ package com.pvz.game.zombies;
 import java.util.*;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.pvz.game.Tilemap;
+import com.pvz.game.audio.SoundManager;
 import com.pvz.game.levels.Level;
-import com.pvz.game.levels.Level1;
 import com.pvz.game.levels.WaveSpawner;
 
 public class ZombieManager {
@@ -20,6 +21,7 @@ public class ZombieManager {
     private Map<Integer, List<Zombie>> laneZombies = new HashMap<>(); // Keeps track of zombies in each lane
     private Map<Integer, List<Zombie>> laneZombiesPerWave = new HashMap<>(); // Keeps track of zombies in each lane
     private Level level;
+    private float groanTimer, nextGroanTime = 3f;
 
 
     public ZombieManager(Tilemap mp) {
@@ -168,6 +170,7 @@ public class ZombieManager {
 
     public void update(float delta) {
 
+        groanSounds(delta);
 
         level.update(delta);
 
@@ -180,6 +183,42 @@ public class ZombieManager {
             zombie.update(delta, map);
         }
     }
+
+    public void groanSounds(float delta) {
+
+        System.out.println(zombies.size());
+        // Only proceed if there are zombies
+        if (zombies.isEmpty()) {
+            groanTimer = 0; // Reset timer when no zombies
+            nextGroanTime = Integer.MAX_VALUE;
+            return;
+        }
+
+        if (nextGroanTime == Integer.MAX_VALUE) {
+            // New zombies appeared, reset groan timing
+            nextGroanTime = 2f; // Or something reasonable like 1-3 seconds
+            groanTimer = 0;
+        }
+
+        groanTimer += delta;
+
+        if (groanTimer >= nextGroanTime) {
+            System.out.println("Play zombie sound");
+            SoundManager.getInstance().play("zombie_groan" + MathUtils.random(1, 6));
+            groanTimer = 0;
+
+            // Clamp zombie count to a max of 3 to limit how fast groans can occur
+            int zombieCount = Math.min(zombies.size(), 3);
+
+
+            float minTime = 3;
+            float maxTime = Math.max(1.5f, 7.0f - (zombieCount - 1) * 0.5f);
+
+
+            nextGroanTime = MathUtils.random(minTime, maxTime);
+        }
+    }
+
 
 
     public void render(SpriteBatch batch, float delta) {

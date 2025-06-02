@@ -19,7 +19,6 @@ public class MusicManager {
 //        load("track1", "music/magical_theme.flac");
         load("track2", "music/the_field_of_dreams.mp3");
         load("track3", "music/03 HoliznaCC0 - Boredom.ogg");
-
     }
 
     public static MusicManager getInstance() {
@@ -42,11 +41,13 @@ public class MusicManager {
         currentlyPlaying.play();
     }
 
-    public void play(String key) {
+    public void play(String key, boolean loop) {
         if (!muted && sounds.containsKey(key)) {
             currentlyPlaying = sounds.get(key);
             currentlyPlaying.setVolume(volume);
             sounds.get(key).play();
+            currentlyPlaying.setLooping(loop);
+            currentlyPlaying.setVolume(volume);
         }
     }
 

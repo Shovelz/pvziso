@@ -38,8 +38,6 @@ public class NormalZombie extends Zombie {
     protected int damage = 100;
     private int previousFrameIndex = -1;
     private boolean diedToExplosion = false;
-    private float groanTimer = 0f;
-    private float nextGroanTime;
     private AssetManager assetManager;
 
 
@@ -56,7 +54,6 @@ public class NormalZombie extends Zombie {
         deathAnimation = loadAnimations(width + 1, height, deathSheet);
         hitbox = new Rectangle(worldPos.x, worldPos.y, 13, 22);
         currentAnimation = walkAnimation;
-        setNextGroanTime();
     }
 
     private void loadAssets(){
@@ -99,13 +96,6 @@ public class NormalZombie extends Zombie {
         previousFrameIndex = currentFrameIndex;
         time += animSpeed * delta;
 
-        groanTimer += delta;
-
-        if (groanTimer >= nextGroanTime) {
-            SoundManager.getInstance().play("zombie_groan" + MathUtils.random(1, 6));
-            groanTimer = 0f;
-            setNextGroanTime();
-        }
     }
 
     @Override
@@ -122,9 +112,6 @@ public class NormalZombie extends Zombie {
         }
     }
 
-    private void setNextGroanTime() {
-        nextGroanTime = MathUtils.random(5f, 15f); // random interval
-    }
 
     public void takeDamage(float projectileDamage, boolean isExplosion) {
         if (projectileDamage >= maxHealth || health <= 0) {

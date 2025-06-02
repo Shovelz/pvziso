@@ -78,7 +78,12 @@ public abstract class Level {
             timer = 0;
             return;
         }
-
+        // No more waves; check if the level is won
+        if (zombieManager.getZombies().isEmpty() && !levelWon && waveSpawner.isSpawnableEmpty()) {
+            levelWon = true;
+            System.out.println("Level Won!!!");
+            spawnWinningItem();
+        }
         if (hasStartedSpawning) {
             timer += delta;
 
@@ -90,13 +95,6 @@ public abstract class Level {
                 if (!nextWave.isEmpty()) {
                     zombies = nextWave;
                     zombieManager.initializeZombiesFromLevel(zombies);
-                } else {
-                    // No more waves; check if the level is won
-                    if (zombieManager.getZombies().isEmpty() && !levelWon) {
-                        levelWon = true;
-                        System.out.println("Level Won!!!");
-                        spawnWinningItem();
-                    }
                 }
             }
         }

@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.pvz.game.IsoGame;
+import com.pvz.game.audio.MusicManager;
 import com.pvz.game.ui.LevelSelect;
 
 import java.util.ArrayList;
@@ -56,7 +57,8 @@ public class LevelSelectScreen implements Screen {
         for(LevelSelect levelSelect : levels){
             levelSelect.setNonSelectable(!game.isPrevLevelCompleted(levelSelect.getLevel()));
         }
-    }
+        MusicManager.getInstance().play("menu", true);
+   }
 
     @Override
     public void render(float delta) {
@@ -164,7 +166,7 @@ public class LevelSelectScreen implements Screen {
 
     @Override
     public void hide() {
-
+        MusicManager.getInstance().pause();
     }
 
     @Override

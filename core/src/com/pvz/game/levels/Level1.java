@@ -31,6 +31,7 @@ public class Level1 extends Level {
     protected void generateFoes(AssetManager assetManager) {
         this.foes = new WaveSpawner.Foe[]{
                 new WaveSpawner.Foe(new NormalZombie(assetManager), 6, 1, 1),
+//                new WaveSpawner.Foe(new NormalZombie(assetManager), 1, 1, 1),
 //                new WaveSpawner.Foe(new ConeZombie(), 15, 3, 3),
 //                new WaveSpawner.Foe(new BucketZombie(), 2, 4, 7)
 //                new WaveSpawner.Foe(new NormalZombie(), 2, 1, 1),
